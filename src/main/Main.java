@@ -58,7 +58,7 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (++i == 10)
+            if (++i == 14)
                 break;
         }
 
@@ -72,7 +72,6 @@ public final class Main {
      */
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {
-        Playlist.instanceCount = 0;
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Reading library
@@ -126,7 +125,7 @@ public final class Main {
                     search.setType(command.getType());
 
                     // Updating search result array
-                    searchResult = search.getSearchResultArray(library, filter, playlists);
+                    searchResult = search.getSearchResultArray(library, filter, playlists, user);
 
                     // Output for search
                     objectNode.put("message", "Search returned " + search.getResultsCount() + " results");
@@ -134,7 +133,7 @@ public final class Main {
                     break;
                 case "select":
                     if (searchResult == null) {
-                        System.out.println("No results found");
+                        objectNode.put("message","Please conduct a search before making a selection.");
                         break;
                     }
                     if (command.getItemNumber() <= search.getResultsCount()) {
@@ -143,6 +142,7 @@ public final class Main {
                                 + searchResult.get(command.getItemNumber() - 1).textValue() + ".");
                     } else
                         objectNode.put("message","The selected ID is too high.");
+                    searchResult = null;
                     break;
                 case "load":
                     if(search.isSelected()) {
@@ -211,7 +211,7 @@ public final class Main {
                     break;
                 case "forward":
                     if(player == null || !player.isLoaded()) {
-                        objectNode.put("message", "Please load a source before skipping forward.");
+                        objectNode.put("message", "Please load a source before attempting to forward.");
                         break;
                     }
 
@@ -221,7 +221,52 @@ public final class Main {
                     if (player.isLoaded()) {
                         player.forward(user, objectNode);
                     } else {
-                        objectNode.put("message","Please load a source before using the shuffle function.");
+                        objectNode.put("message","Please load a source before attempting to forward.");
+                    }
+                    break;
+                case "backward":
+                    if(player == null || !player.isLoaded()) {
+                        objectNode.put("message", "Please select a source before rewinding.");
+                        break;
+                    }
+
+                    // Updating status
+                    player.updateStatus(command.getTimestamp(), user);
+
+                    if (player.isLoaded()) {
+                        player.backward(user, objectNode);
+                    } else {
+                        objectNode.put("message","Please select a source before rewinding.");
+                    }
+                    break;
+                case "next":
+                    if(player == null || !player.isLoaded()) {
+                        objectNode.put("message", "Please load a source before skipping to the next track.");
+                        break;
+                    }
+
+                    // Updating status
+                    player.updateStatus(command.getTimestamp(), user);
+
+                    if (player.isLoaded()) {
+                        player.next(user, objectNode, command.getTimestamp());
+                    } else {
+                        objectNode.put("message","Please load a source before skipping to the next track.");
+                    }
+                    break;
+                case "prev":
+                    if(player == null || !player.isLoaded()) {
+                        objectNode.put("message", "Please load a source before returning to the previous track.");
+                        break;
+                    }
+
+                    // Updating status
+                    player.updateStatus(command.getTimestamp(), user);
+
+                    if (player.isLoaded()) {
+                        player.prev(user, objectNode, command.getTimestamp());
+                    } else {
+                        objectNode.put("message","Please load a source before returning to the previous track.");
                     }
                     break;
                 case "status":
@@ -239,7 +284,7 @@ public final class Main {
                     break;
                 case "addRemoveInPlaylist":
                     if(player != null && player.isLoaded()) {
-                        player.addRemoveInPlaylist(playlists, command.getPlaylistId(), objectNode);
+                        player.addRemoveInPlaylist(user, command.getPlaylistId(), objectNode);
                     } else {
                         objectNode.put("message", "Please load a source before adding to or removing from the playlist.");
                     }
@@ -249,7 +294,7 @@ public final class Main {
                         objectNode.put("message","A playlist with the same name already exists.");
                     } else {
                         // Creating new playlist
-                        Playlist playlist = new Playlist(command.getPlaylistName());
+                        Playlist playlist = new Playlist(command.getPlaylistName(), user.getPlaylists().size() + 1);
                         playlist.setCreatedBy(command.getUsername());
 
                         // Adding playlist to user and playlist array
@@ -258,20 +303,34 @@ public final class Main {
 
                         objectNode.put("message","Playlist created successfully.");
                     }
+                    search.setSelected(false);
                     break;
                 case "showPlaylists":
                     Playlist.showPlaylists(objectNode, user);
+                    search.setSelected(false);
                     break;
                 case "showPreferredSongs":
                     user.showPreferredSongs(objectNode);
+                    search.setSelected(false);
                     break;
                 case "switchVisibility":
-                    if (Playlist.instanceCount < command.getPlaylistId()) {
+                    if (user.getPlaylists().size()  < command.getPlaylistId()) {
                         objectNode.put("message", "The specified playlist ID is too high.");
                     } else {
-                        Playlist.switchVisibility(playlists, command.getPlaylistId());
+                        Playlist.switchVisibility(playlists, command.getPlaylistId(), user, objectNode);
                     }
+                    search.setSelected(false);
                     break;
+                case "follow":
+                    if(!search.isSelected()) {
+                        objectNode.put("message", "Please select a source before following or unfollowing.");
+                        break;
+                    }
+                    if (search.getSelectedPlaylist() != null) {
+                        Playlist.follow(user, search.getSelectedPlaylist(), objectNode);
+                    } else {
+                        objectNode.put("message", "The selected source is not a playlist.");
+                    }
                 default:
                     break;
             }

@@ -2,10 +2,7 @@ package main;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import fileio.input.EpisodeInput;
-import fileio.input.LibraryInput;
-import fileio.input.PodcastInput;
-import fileio.input.SongInput;
+import fileio.input.*;
 
 import java.util.ArrayList;
 
@@ -97,7 +94,10 @@ public class Search {
                 break;
         }
     }
-    public ArrayNode getSearchResultArray(LibraryInput library, Filters filter, ArrayList<Playlist> playlists) {
+    public ArrayNode getSearchResultArray(LibraryInput library,
+                                          Filters filter,
+                                          ArrayList<Playlist> playlists,
+                                          final UserInput user) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode resultArray = objectMapper.createArrayNode();
         switch (type) {
@@ -134,11 +134,13 @@ public class Search {
                 }
                 break;
             case "playlist":
-                ArrayList<Playlist> playlistSearchResult = (ArrayList<Playlist>) playlists.clone();
+                ArrayList<Playlist> playlistSearchResult = new ArrayList<>(playlists);
                 if (filter.getName() != null)
                     playlistSearchResult = SearchPlaylist.byName(playlistSearchResult, filter.getName());
                 if (filter.getOwner() != null)
                     playlistSearchResult = SearchPlaylist.byOwner(playlistSearchResult, filter.getOwner());
+                playlistSearchResult.removeIf(playlist -> playlist.getVisibility().equals("private")
+                        && !user.getPlaylists().contains(playlist));
                 resultsCount = Math.min(5, playlistSearchResult.size());
                 for (Playlist playlist : playlistSearchResult.subList(0, resultsCount)) {
                     resultArray.add(((Playlist) playlist).getName());
@@ -181,7 +183,7 @@ class SearchSong {
     public static ArrayList<SongInput> byLyrics(ArrayList<SongInput> songs, String Lyrics) {
         ArrayList<SongInput> byLyrics = new ArrayList<>();
         for(SongInput song : songs) {
-            if(song.getLyrics().toLowerCase().contains(Lyrics)) {
+            if(song.getLyrics().toLowerCase().contains(Lyrics.toLowerCase())) {
                 byLyrics.add(song);
             }
         }
@@ -190,7 +192,7 @@ class SearchSong {
     public static ArrayList<SongInput> byGenre(ArrayList<SongInput> songs, String genre) {
         ArrayList<SongInput> byGenre = new ArrayList<>();
         for(SongInput song : songs) {
-            if(song.getGenre().equals(genre)) {
+            if(song.getGenre().equalsIgnoreCase(genre)) {
                 byGenre.add(song);
             }
         }

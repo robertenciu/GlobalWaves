@@ -12,13 +12,16 @@ public final class UserInput {
     private int age;
     private String city;
     private ArrayList<SongInput> likedSongs;
-    private ArrayList<Playlist> playlists;
-    private HashMap<String, EpisodeInput> lastEpisodes;
+    private final ArrayList<Playlist> playlists;
+    private int numberOfPlaylists;
+    private final HashMap<String, EpisodeInput> lastEpisodes;
+    private final ArrayList<Playlist> followedPlaylists;
 
     public UserInput() {
         likedSongs = new ArrayList<>();
         playlists = new ArrayList<>();
         lastEpisodes = new HashMap<>();
+        followedPlaylists = new ArrayList<>();
     }
     /**
      * This is a sample method that adds two integers.
@@ -49,6 +52,19 @@ public final class UserInput {
             }
         }
     }
+
+    public int getNumberOfPlaylists() {
+        return numberOfPlaylists;
+    }
+
+    public void setNumberOfPlaylists(int numberOfPlaylists) {
+        this.numberOfPlaylists = numberOfPlaylists;
+    }
+
+    public ArrayList<Playlist> getFollowedPlaylists() {
+        return followedPlaylists;
+    }
+
     public ArrayList<SongInput> getLikedSongs() {
         return likedSongs;
     }

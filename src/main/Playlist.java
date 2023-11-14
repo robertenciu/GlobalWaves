@@ -14,18 +14,15 @@ public final class Playlist {
     private String name;
     private String createdBy;
     private int followers;
-    public static Integer instanceCount = 0;
     private final Integer playlistId;
     private ArrayList<SongInput> songs;
     private ArrayList<SongInput> originalOrder;
     private String visibility;
-    public Playlist () {this.visibility = "public";instanceCount++;this.playlistId = instanceCount;}
-    public Playlist(String name) {
+    public Playlist(String name, int id) {
         this.visibility = "public";
         this.name = name;
         this.songs = new ArrayList<>();
-        instanceCount++;
-        this.playlistId = instanceCount;
+        this.playlistId = id;
     }
 
     public static boolean exists(String name, ArrayList<Playlist> playlists) {
@@ -43,18 +40,45 @@ public final class Playlist {
     public static void unshuffleSongs(final Playlist playlist) {
         Collections.copy(playlist.getSongs(), playlist.originalOrder);
     }
-    public static void switchVisibility(ArrayList<Playlist> playlists, Integer playlistId) {
-        Playlist playlist = getPlaylistFromId(playlists, playlistId);
-        if(playlist != null) {
-            if(playlist.getVisibility().equals("public"))
-                playlist.setVisibility("private");
-            else
-                playlist.setVisibility("public");
+    public static void switchVisibility(ArrayList<Playlist> playlists,
+                                        Integer playlistId,
+                                        UserInput user,
+                                        final ObjectNode objectNode) {
+        Playlist playlist = getPlaylistFromId(user, playlistId);
+        assert playlist != null;
+
+        if (!playlist.getCreatedBy().equals(user.getUsername())) {
+            return;
+        }
+
+        if (playlist.getVisibility().equals("public")) {
+            playlist.setVisibility("private");
+            objectNode.put("message", "Visibility status updated successfully to private.");
+        } else {
+            playlist.setVisibility("public");
+            objectNode.put("message", "Visibility status updated successfully to public.");
         }
     }
-    public static Playlist getPlaylistFromId(ArrayList<Playlist> playlists, Integer playlistId) {
-        if(playlistId > Playlist.instanceCount)
-            return null;
+    public static void follow(UserInput user, Playlist playlist, ObjectNode objectNode) {
+        if (user.getPlaylists().contains(playlist)) {
+            objectNode.put("message", "You cannot follow or unfollow your own playlist.");
+            return;
+        }
+        if (playlist.getVisibility().equals("private")) {
+            return;
+        }
+        if (user.getFollowedPlaylists().contains(playlist)) {
+            user.getFollowedPlaylists().remove(playlist);
+            playlist.setFollowers(playlist.getFollowers() - 1);
+            objectNode.put("message", "Playlist unfollowed successfully.");
+        } else {
+            user.getFollowedPlaylists().add(playlist);
+            playlist.setFollowers(playlist.getFollowers() + 1);
+            objectNode.put("message", "Playlist followed successfully.");
+        }
+    }
+    public static Playlist getPlaylistFromId(UserInput user, Integer playlistId) {
+        ArrayList<Playlist> playlists = user.getPlaylists();
         for(Playlist playlist : playlists)
             if(playlist.getPlaylistId().equals(playlistId))
                 return playlist;
@@ -65,8 +89,11 @@ public final class Playlist {
             if(playlist.getSongs().get(i).getName().equals(currentSong.getName()))
                 return playlist.getSongs().get(i + 1);
         if(playlist.getSongs().get(playlist.getSongs().size() - 1).getName().equals(currentSong.getName()))
-            return playlist.getSongs().get(0);
+            return firstSong(playlist);
         return null;
+    }
+    public static SongInput firstSong(Playlist playlist) {
+        return playlist.getSongs().get(0);
     }
     public static void showPlaylists(ObjectNode objectNode, UserInput user) {
         ArrayNode result = objectNode.putArray("result");

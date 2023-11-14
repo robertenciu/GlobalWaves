@@ -14,7 +14,10 @@ interface PlayerCommands {
     void updateStatus(Integer timestamp, UserInput user);
     void like(UserInput user, ObjectNode objectNode);
     void forward(UserInput user, ObjectNode objectNode);
-    void addRemoveInPlaylist(ArrayList<Playlist> playlists,
+    void backward(final UserInput user, final ObjectNode objectNode);
+    void next(final UserInput user, final ObjectNode objectNode, final Integer timestamp);
+    void prev(final UserInput user, final ObjectNode objectNode, final Integer timestamp);
+    void addRemoveInPlaylist(UserInput user,
                              Integer playlistId,
                              ObjectNode objectNode);
     void repeat();
@@ -26,6 +29,8 @@ abstract class AbstractPlayer implements PlayerCommands {
     protected int timesRepeated = 0;
     protected Stats status = Stats.getInstance();
     protected Search search = Search.getInstance();
+    public void next(final UserInput user, final ObjectNode objectNode, final Integer timestamp) { }
+    public void prev (final UserInput user, final ObjectNode objectNode, final Integer timestamp) { }
 
     public static AbstractPlayer createPlayer(final String type) {
         if (type == null) {
@@ -70,7 +75,10 @@ abstract class AbstractPlayer implements PlayerCommands {
     public void forward(UserInput user, ObjectNode objectNode) {
         objectNode.put("message", "The loaded source is not a podcast.");
     }
-    public void addRemoveInPlaylist(final ArrayList<Playlist> playlists,
+    public void backward(UserInput user, ObjectNode objectNode) {
+        objectNode.put("message", "The loaded source is not a podcast.");
+    }
+    public void addRemoveInPlaylist(final UserInput user,
                                     final Integer playlistId,
                                     final ObjectNode objectNode) {
         // Default
@@ -80,10 +88,10 @@ abstract class AbstractPlayer implements PlayerCommands {
 class SongPlayer extends AbstractPlayer {
     public SongPlayer() { }
     @Override
-    public void addRemoveInPlaylist(final ArrayList<Playlist> playlists,
+    public void addRemoveInPlaylist(final UserInput user,
                                     final Integer playlistId,
                                     final ObjectNode objectNode) {
-        Playlist playlist = Playlist.getPlaylistFromId(playlists, playlistId);
+        Playlist playlist = Playlist.getPlaylistFromId(user, playlistId);
         if (playlist == null) {
             objectNode.put("message", "The specified playlist does not exist.");
             return;
@@ -185,6 +193,9 @@ class PodcastPlayer extends AbstractPlayer {
     private EpisodeInput lastEpisode(final UserInput user) {
         return user.getLastEpisodes().get(search.getSelectedPodcast().getName());
     }
+    private EpisodeInput firstEpisode(final UserInput user) {
+        return search.getSelectedPodcast().getEpisodes().get(0);
+    }
     @Override
     public void load(final Integer timestamp, final UserInput user) {
         PodcastInput podcast = search.getSelectedPodcast();
@@ -192,6 +203,7 @@ class PodcastPlayer extends AbstractPlayer {
             user.getLastEpisodes().put(podcast.getName(), podcast.getEpisodes().get(0));
         }
         EpisodeInput episode = lastEpisode(user);
+        episode.setInitialDuration(episode.getDuration());
         status.setPaused(false);
         status.setRemainedTime(episode.getDuration());
         super.timeLoaded = timestamp;
@@ -212,21 +224,20 @@ class PodcastPlayer extends AbstractPlayer {
     }
     public void backward(final UserInput user, final ObjectNode objectNode) {
         EpisodeInput lastEpisode = lastEpisode(user);
-        if (lastEpisode.getDuration() - 90 > 0 ) {
-            lastEpisode.setDuration(lastEpisode.getDuration() - 90);
-            status.setRemainedTime(status.getRemainedTime() - 90);
+        if (lastEpisode.getDuration() + 90 <= lastEpisode.getInitialDuration()) {
+            lastEpisode.setDuration(lastEpisode.getDuration() + 90);
+            status.setRemainedTime(status.getRemainedTime() + 90);
         } else {
-            EpisodeInput nextEpisode = nextEpisode(user);
-            status.setRemainedTime(nextEpisode.getDuration());
-            lastEpisode.setDuration(0);
-            user.getLastEpisodes().put(search.getSelectedPodcast().getName(), nextEpisode);
+            status.setRemainedTime(lastEpisode.getInitialDuration());
+            lastEpisode.setDuration(lastEpisode.getInitialDuration());
         }
-        objectNode.put("message", "Skipped forward successfully.");
+        objectNode.put("message", "Rewound successfully.");
     }
     void handleNoRepeat(Integer timeElapsed, final UserInput user, EpisodeInput episode) {
         timeElapsed = timeElapsed - lastEpisode(user).getDuration();
         episode.setDuration(0);
         episode = nextEpisode(user);
+        episode.setInitialDuration(episode.getDuration());
         user.getLastEpisodes().put(search.getSelectedPodcast().getName(), episode);
         episode.setDuration(episode.getDuration() - timeElapsed);
         if (timeElapsed >= episode.getDuration()) {
@@ -274,6 +285,31 @@ class PodcastPlayer extends AbstractPlayer {
     public void repeat() {
         // Repeat is same as in SongPlayer
         new SongPlayer().repeat();
+    }
+    public void next(final UserInput user, final ObjectNode objectNode, final Integer timestamp) {
+        EpisodeInput nextEpisode = nextEpisode(user);
+        switch (status.getRepeat()) {
+            case "No Repeat":
+                if(nextEpisode.equals(firstEpisode(user))) {
+                    status.reset();
+                    isLoaded = false;
+                } else {
+                    user.getLastEpisodes().put(search.getSelectedPodcast().getName(), nextEpisode);
+                    status.setRemainedTime(nextEpisode.getDuration());
+                    status.setName(nextEpisode.getName());
+                }
+                break;
+            case "Repeat Once":
+            case "Repeat Infinite":
+                status.setRemainedTime(nextEpisode.getDuration());
+                status.setName(nextEpisode.getName());
+                break;
+            default:
+                break;
+        }
+        timeLoaded = timestamp;
+        objectNode.put("message", "Skipped to next track successfully. The current track is " +
+                status.getName() + ".");
     }
 }
 
@@ -378,5 +414,50 @@ class PlaylistPlayer extends AbstractPlayer {
             status.setShuffle(true);
             objectNode.put("message", "Shuffle function activated successfully.");
         }
+    }
+    public void next(final UserInput user, final ObjectNode objectNode, final Integer timestamp) {
+        SongInput nextSong = Playlist.nextSong(search.getSelectedSong(), search.getSelectedPlaylist());
+        switch (status.getRepeat()) {
+            case "No Repeat":
+                if (nextSong.equals(Playlist.firstSong(search.getSelectedPlaylist()))) {
+                    status.reset();
+                    search.setSelectedSong(null);
+                    this.isLoaded = false;
+                } else {
+                    search.setSelectedSong(nextSong);
+                    status.setRemainedTime(nextSong.getDuration());
+                    status.setName(search.getSelectedSong().getName());
+                }
+                break;
+            case "Repeat All":
+                search.setSelectedSong(nextSong);
+                status.setRemainedTime(nextSong.getDuration());
+                status.setName(search.getSelectedSong().getName());
+                break;
+            default:
+                break;
+        }
+        timeLoaded = timestamp;
+        objectNode.put("message", "Skipped to next track successfully. The current track is " +
+                search.getSelectedSong().getName() + ".");
+
+    }
+    private SongInput prevSong() {
+        for(int i = 1; i < search.getSelectedPlaylist().getSongs().size(); i++)
+            if(search.getSelectedPlaylist().getSongs().get(i).getName().equals(search.getSelectedSong().getName()))
+                return search.getSelectedPlaylist().getSongs().get(i - 1);
+        return Playlist.firstSong(search.getSelectedPlaylist());
+    }
+    public void prev(final UserInput user, final ObjectNode objectNode, final Integer timestamp) {
+        if (status.getRemainedTime() < search.getSelectedSong().getDuration()) {
+            status.setRemainedTime(search.getSelectedSong().getDuration());
+        } else {
+            status.setRemainedTime(prevSong().getDuration());
+            status.setName(prevSong().getName());
+            search.setSelectedSong(prevSong());
+        }
+        timeLoaded = timestamp;
+        objectNode.put("message", "Returned to previous track successfully. The current track is " +
+                search.getSelectedSong().getName() + ".");
     }
 }
