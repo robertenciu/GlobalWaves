@@ -1,6 +1,6 @@
 package main;
 
-public class Stats {
+public final class Stats {
     private String name;
     private Integer remainedTime;
     private String repeat;
@@ -8,8 +8,15 @@ public class Stats {
     private boolean paused;
     private static Stats instance = null;
 
-    private Stats() {}
+    private Stats() { }
 
+    public void reset() {
+        name = "";
+        remainedTime = 0;
+        repeat = "No Repeat";
+        shuffle = false;
+        paused = true;
+    }
     public static Stats getInstance() {
         if (instance == null) {
             instance = new Stats();
@@ -23,7 +30,7 @@ public class Stats {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -31,7 +38,7 @@ public class Stats {
         return remainedTime;
     }
 
-    public void setRemainedTime(Integer remainedTime) {
+    public void setRemainedTime(final Integer remainedTime) {
         this.remainedTime = remainedTime;
     }
 
@@ -39,7 +46,7 @@ public class Stats {
         return repeat;
     }
 
-    public void setRepeat(String repeat) {
+    public void setRepeat(final String repeat) {
         this.repeat = repeat;
     }
 
@@ -47,7 +54,7 @@ public class Stats {
         return shuffle;
     }
 
-    public void setShuffle(boolean shuffle) {
+    public void setShuffle(final boolean shuffle) {
         this.shuffle = shuffle;
     }
 
@@ -55,7 +62,7 @@ public class Stats {
         return paused;
     }
 
-    public void setPaused(boolean paused) {
+    public void setPaused(final boolean paused) {
         this.paused = paused;
     }
 }

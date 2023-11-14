@@ -1,20 +1,23 @@
 package main;
 
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fileio.input.SongInput;
+import fileio.input.UserInput;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Random;
 
-public class Playlist {
+public final class Playlist {
     private String name;
     private String createdBy;
     private int followers;
     public static Integer instanceCount = 0;
     private final Integer playlistId;
     private ArrayList<SongInput> songs;
+    private ArrayList<SongInput> originalOrder;
     private String visibility;
     public Playlist () {this.visibility = "public";instanceCount++;this.playlistId = instanceCount;}
     public Playlist(String name) {
@@ -31,6 +34,14 @@ public class Playlist {
                 return true;
         }
         return false;
+    }
+    public static void shuffleSongs(final Playlist playlist, final long seed) {
+        Random random = new Random(seed);
+        playlist.originalOrder = new ArrayList<>(playlist.getSongs());
+        Collections.shuffle(playlist.getSongs(), random);
+    }
+    public static void unshuffleSongs(final Playlist playlist) {
+        Collections.copy(playlist.getSongs(), playlist.originalOrder);
     }
     public static void switchVisibility(ArrayList<Playlist> playlists, Integer playlistId) {
         Playlist playlist = getPlaylistFromId(playlists, playlistId);
@@ -49,7 +60,15 @@ public class Playlist {
                 return playlist;
         return null;
     }
-    public static void showPlaylists(ObjectNode objectNode, User user) {
+    public static SongInput nextSong(SongInput currentSong, Playlist playlist) {
+        for(int i = 0; i < playlist.getSongs().size() - 1; i++)
+            if(playlist.getSongs().get(i).getName().equals(currentSong.getName()))
+                return playlist.getSongs().get(i + 1);
+        if(playlist.getSongs().get(playlist.getSongs().size() - 1).getName().equals(currentSong.getName()))
+            return playlist.getSongs().get(0);
+        return null;
+    }
+    public static void showPlaylists(ObjectNode objectNode, UserInput user) {
         ArrayNode result = objectNode.putArray("result");
 
         for (Playlist playlist : user.getPlaylists()) {
@@ -89,10 +108,6 @@ public class Playlist {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public static Integer getInstanceCount() {
-        return instanceCount;
     }
 
     public void setName(String name) {

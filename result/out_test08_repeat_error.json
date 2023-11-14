@@ -28,49 +28,49 @@
     "remainedTime" : 316,
     "repeat" : "No Repeat",
     "shuffle" : false,
-    "paused" : true
+    "paused" : false
   }
 }, {
   "command" : "repeat",
   "user" : "emily30",
   "timestamp" : 1191,
-  "message" : "Repeat mode changed to Repeat once."
+  "message" : "Repeat mode changed to repeat once."
 }, {
   "command" : "repeat",
   "user" : "emily30",
   "timestamp" : 1192,
-  "message" : "Repeat mode changed to Repeat infinite."
+  "message" : "Repeat mode changed to repeat infinite."
 }, {
   "command" : "repeat",
   "user" : "emily30",
   "timestamp" : 2000,
-  "message" : "Repeat mode changed to No Repeat."
+  "message" : "Repeat mode changed to no repeat."
 }, {
   "command" : "status",
   "user" : "emily30",
   "timestamp" : 2100,
   "stats" : {
-    "name" : "",
-    "remainedTime" : 0,
+    "name" : "The Unforgiven",
+    "remainedTime" : 178,
     "repeat" : "No Repeat",
     "shuffle" : false,
-    "paused" : true
+    "paused" : false
   }
 }, {
   "command" : "repeat",
   "user" : "emily30",
   "timestamp" : 2135,
-  "message" : "Repeat mode changed to Repeat once."
+  "message" : "Repeat mode changed to repeat once."
 }, {
   "command" : "status",
   "user" : "emily30",
   "timestamp" : 2200,
   "stats" : {
-    "name" : "",
-    "remainedTime" : 0,
-    "repeat" : "Repeat once",
+    "name" : "The Unforgiven",
+    "remainedTime" : 78,
+    "repeat" : "Repeat Once",
     "shuffle" : false,
-    "paused" : true
+    "paused" : false
   }
 }, {
   "command" : "search",
@@ -95,7 +95,7 @@
   "stats" : {
     "name" : "",
     "remainedTime" : 0,
-    "repeat" : "Repeat once",
+    "repeat" : "No Repeat",
     "shuffle" : false,
     "paused" : true
   }
@@ -124,7 +124,7 @@
   "command" : "repeat",
   "user" : "emily30",
   "timestamp" : 3200,
-  "message" : "Repeat mode changed to Repeat infinite."
+  "message" : "Repeat mode changed to repeat once."
 }, {
   "command" : "status",
   "user" : "emily30",
@@ -132,9 +132,9 @@
   "stats" : {
     "name" : "99 Problems",
     "remainedTime" : 209,
-    "repeat" : "Repeat infinite",
+    "repeat" : "Repeat Once",
     "shuffle" : false,
-    "paused" : true
+    "paused" : false
   }
 }, {
   "command" : "addRemoveInPlaylist",
@@ -167,9 +167,9 @@
   "user" : "emily30",
   "timestamp" : 3310,
   "stats" : {
-    "name" : "99 Problems",
-    "remainedTime" : 209,
-    "repeat" : "Repeat infinite",
+    "name" : "",
+    "remainedTime" : 0,
+    "repeat" : "No Repeat",
     "shuffle" : false,
     "paused" : true
   }
@@ -183,9 +183,9 @@
   "user" : "emily30",
   "timestamp" : 3400,
   "stats" : {
-    "name" : "99 Problems",
-    "remainedTime" : 209,
-    "repeat" : "Repeat infinite",
+    "name" : "",
+    "remainedTime" : 0,
+    "repeat" : "No Repeat",
     "shuffle" : false,
     "paused" : true
   }
@@ -204,9 +204,9 @@
   "user" : "emily30",
   "timestamp" : 3450,
   "stats" : {
-    "name" : "99 Problems",
-    "remainedTime" : 209,
-    "repeat" : "Repeat infinite",
+    "name" : "",
+    "remainedTime" : 0,
+    "repeat" : "No Repeat",
     "shuffle" : false,
     "paused" : true
   }

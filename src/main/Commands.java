@@ -1,30 +1,31 @@
 package main;
 
-public class Commands {
+public final class Commands {
     private String command;
     private String username;
     private Integer playlistId;
-    private Integer seed;
-    public Integer getSeed() {
-        return seed;
-    }
-
-    public void setSeed(Integer seed) {
-        this.seed = seed;
-    }
-
+    private long seed;
     private String playlistName;
     private Integer timestamp;
     private Integer itemNumber;
     private String type;
     private Filters filters;
-    public Commands() {}
+    public Commands() { }
+
+    public long getSeed() {
+        return seed;
+    }
+
+    public void setSeed(final long seed) {
+        this.seed = seed;
+    }
+
 
     public String getCommand() {
         return command;
     }
 
-    public void setCommand(String command) {
+    public void setCommand(final String command) {
         this.command = command;
     }
 
@@ -32,7 +33,7 @@ public class Commands {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -40,7 +41,7 @@ public class Commands {
         return playlistId;
     }
 
-    public void setPlaylistId(Integer playlistId) {
+    public void setPlaylistId(final Integer playlistId) {
         this.playlistId = playlistId;
     }
 
@@ -48,7 +49,7 @@ public class Commands {
         return playlistName;
     }
 
-    public void setPlaylistName(String playlistName) {
+    public void setPlaylistName(final String playlistName) {
         this.playlistName = playlistName;
     }
 
@@ -56,7 +57,7 @@ public class Commands {
         return timestamp;
     }
 
-    public void setTimestamp(Integer timestamp) {
+    public void setTimestamp(final Integer timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -64,7 +65,7 @@ public class Commands {
         return itemNumber;
     }
 
-    public void setItemNumber(Integer itemNumber) {
+    public void setItemNumber(final Integer itemNumber) {
         this.itemNumber = itemNumber;
     }
 
@@ -72,7 +73,7 @@ public class Commands {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -80,7 +81,7 @@ public class Commands {
         return filters;
     }
 
-    public void setFilters(Filters filters) {
+    public void setFilters(final Filters filters) {
         this.filters = filters;
     }
 }

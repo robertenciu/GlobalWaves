@@ -8,7 +8,7 @@
   "user" : "emily30",
   "timestamp" : 3215,
   "message" : "Search returned 5 results",
-  "results" : [ "Shape of You", "Dream On", "Black Dog", "Sad But True", "Maps" ]
+  "results" : [ "Shape of You", "Stairway to Heaven", "Dream On", "Black Dog", "Sad But True" ]
 }, {
   "command" : "select",
   "user" : "emily30",
@@ -28,14 +28,14 @@
   "command" : "load",
   "user" : "emily30",
   "timestamp" : 3285,
-  "message" : "Playback loaded successfully."
+  "message" : "Please select a source before attempting to load."
 }, {
   "command" : "status",
   "user" : "emily30",
   "timestamp" : 3290,
   "stats" : {
     "name" : "Shape of You",
-    "remainedTime" : 228,
+    "remainedTime" : 208,
     "repeat" : "No Repeat",
     "shuffle" : false,
     "paused" : false
@@ -143,7 +143,7 @@
   "timestamp" : 4170,
   "stats" : {
     "name" : "Shape of You",
-    "remainedTime" : 208,
+    "remainedTime" : 168,
     "repeat" : "No Repeat",
     "shuffle" : false,
     "paused" : false
@@ -152,7 +152,7 @@
   "command" : "load",
   "user" : "emily30",
   "timestamp" : 4245,
-  "message" : "Playback loaded successfully."
+  "message" : "Please select a source before attempting to load."
 }, {
   "command" : "search",
   "user" : "emily30",
@@ -169,10 +169,10 @@
   "user" : "emily30",
   "timestamp" : 4370,
   "stats" : {
-    "name" : "Shape of You",
-    "remainedTime" : 208,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
     "shuffle" : false,
-    "paused" : false
+    "paused" : true
   }
 } ]
