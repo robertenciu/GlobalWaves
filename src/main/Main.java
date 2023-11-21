@@ -58,8 +58,6 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (++i == 14)
-                break;
         }
 
         Checker.calculateScore();
@@ -100,9 +98,10 @@ public final class Main {
 
         for(Commands command : commands) {
             // Getting user by username from the library
-            UserInput user = UserInput.getUserByName(library.getUsers(), command.getUsername());
-            if(user == null)
-                return;
+            UserInput user = null;
+            if(command.getUsername() != null) {
+                user = UserInput.getUserByName(library.getUsers(), command.getUsername());
+            }
 
             // Setting filters
             Filters filter = command.getFilters();
@@ -110,7 +109,8 @@ public final class Main {
             // Setting output json node (standard output for all commands)
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", command.getCommand());
-            objectNode.put("user", command.getUsername());
+            if  (user != null)
+                objectNode.put("user", command.getUsername());
             objectNode.put("timestamp", command.getTimestamp());
 
             switch (command.getCommand()) {
@@ -331,6 +331,23 @@ public final class Main {
                     } else {
                         objectNode.put("message", "The selected source is not a playlist.");
                     }
+                    break;
+                case "getTop5Songs":
+                    Statistics statistic = new Statistics(library.getSongs(), playlists);
+                    ArrayNode result = objectNode.putArray("result");
+                    ArrayList<String> top5 = statistic.getTop5Songs();
+                    for (String song : top5) {
+                        result.add(song);
+                    }
+                    break;
+                case "getTop5Playlists":
+                    Statistics statisticPlaylist = new Statistics(library.getSongs(), playlists);
+                    ArrayNode resultPlaylist = objectNode.putArray("result");
+                    ArrayList<String> top5Playlists = statisticPlaylist.getTop5Playlists();
+                    for (String playlist : top5Playlists) {
+                        resultPlaylist.add(playlist);
+                    }
+                    break;
                 default:
                     break;
             }

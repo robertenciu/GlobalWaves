@@ -11,8 +11,21 @@ public final class SongInput {
     private String genre;
     private Integer releaseYear;
     private String artist;
+    private int likes;
 
     public SongInput() {
+    }
+
+    public void setReleaseYear(Integer releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
     public String getName() {

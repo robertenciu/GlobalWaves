@@ -109,9 +109,11 @@ class SongPlayer extends AbstractPlayer {
         if (user.getLikedSongs().contains(search.getSelectedSong())) {
             objectNode.put("message", "Unlike registered successfully.");
             user.getLikedSongs().remove(search.getSelectedSong());
+            search.getSelectedSong().setLikes(search.getSelectedSong().getLikes() - 1);
         } else {
             objectNode.put("message", "Like registered successfully.");
             user.getLikedSongs().add(search.getSelectedSong());
+            search.getSelectedSong().setLikes(search.getSelectedSong().getLikes() + 1);
         }
     }
 
