@@ -1,11 +1,26 @@
-package fileio.input;
+package Media;
 
-public final class EpisodeInput {
+import fileio.input.*;
+
+public final class Episode {
     private String name;
     private Integer duration;
+    private Integer initialDuration;
     private String description;
 
-    public EpisodeInput() {
+    public Episode(EpisodeInput episode) {
+        this.description = episode.getDescription();
+        this.name = episode.getName();
+        this.duration = episode.getDuration();
+        this.initialDuration = episode.getDuration();
+    }
+
+    public void setInitialDuration(Integer initialDuration) {
+        this.initialDuration = initialDuration;
+    }
+
+    public Integer getInitialDuration() {
+        return initialDuration;
     }
 
     public String getName() {
@@ -32,3 +47,4 @@ public final class EpisodeInput {
         this.description = description;
     }
 }
+

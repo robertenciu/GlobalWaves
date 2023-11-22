@@ -1,5 +1,7 @@
 package main;
 
+import Player.AbstractPlayer;
+import SearchBar.Search;
 import checker.Checker;
 import checker.CheckerConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.*;
+import Media.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,17 +79,20 @@ public final class Main {
         LibraryInput library = objectMapper.readValue(new File(LIBRARY_PATH), LibraryInput.class);
 
         // Reading commands
-        Commands[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH + filePath1), Commands[].class);
+        Commands[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
+                                                        + filePath1), Commands[].class);
 
         // Output array
         ArrayNode outputs = objectMapper.createArrayNode();
 
-        // Playlist Array creation
+        // Media and User copy Arrays creation
         ArrayList<Playlist> playlists = new ArrayList<>();
+        ArrayList<Song> songs = Song.copySongs(library);
+        ArrayList<Podcast> podcasts = Podcast.copyPodcasts(library);
+        ArrayList<User> users = User.copyUsers(library);
 
         // Initiating search
-        Search search = Search.getInstance();
-        search.reset(); // reset search history from previous test
+        Search search = null;
         ArrayNode searchResult = null;
 
         // Initiating player
@@ -97,11 +103,8 @@ public final class Main {
         status.reset(); // reset status history from previous test
 
         for(Commands command : commands) {
-            // Getting user by username from the library
-            UserInput user = null;
-            if(command.getUsername() != null) {
-                user = UserInput.getUserByName(library.getUsers(), command.getUsername());
-            }
+            // Getting user by username
+            User user = User.getUserByName(users, command.getUsername());
 
             // Setting filters
             Filters filter = command.getFilters();
@@ -109,7 +112,7 @@ public final class Main {
             // Setting output json node (standard output for all commands)
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", command.getCommand());
-            if  (user != null)
+            if (user != null)
                 objectNode.put("user", command.getUsername());
             objectNode.put("timestamp", command.getTimestamp());
 
@@ -120,32 +123,40 @@ public final class Main {
                         player.setLoaded(false);
                     }
 
-                    status.reset(); // Resetting status history
-                    search.reset(); // Resetting search history
-                    search.setType(command.getType());
+                    // Resetting status history
+                    status.reset();
+
+                    // New search
+                    search = Search.newSearch(command.getType(),songs, podcasts, playlists);
 
                     // Updating search result array
-                    searchResult = search.getSearchResultArray(library, filter, playlists, user);
+                    searchResult = search.getSearchResultArray(filter, user);
 
                     // Output for search
-                    objectNode.put("message", "Search returned " + search.getResultsCount() + " results");
+                    objectNode.put("message",
+                            "Search returned " + search.getResultsCount() + " results");
                     objectNode.put("results", searchResult);
                     break;
                 case "select":
                     if (searchResult == null) {
-                        objectNode.put("message","Please conduct a search before making a selection.");
+                        objectNode.put("message",
+                                "Please conduct a search before making a selection.");
                         break;
                     }
                     if (command.getItemNumber() <= search.getResultsCount()) {
-                        search.select(searchResult.get(command.getItemNumber() - 1).textValue(), library, playlists);
-                        objectNode.put("message", "Successfully selected "
-                                + searchResult.get(command.getItemNumber() - 1).textValue() + ".");
-                    } else
-                        objectNode.put("message","The selected ID is too high.");
+                        String selected = searchResult.get(command.getItemNumber() - 1).textValue();
+                        search.select(selected);
+                        objectNode.put("message",
+                                "Successfully selected " + selected + ".");
+                    } else {
+                        objectNode.put("message",
+                                "The selected ID is too high.");
+                    }
                     searchResult = null;
                     break;
                 case "load":
-                    if(search.isSelected()) {
+                    assert search != null;
+                    if (search.isSelected()) {
                         search.setSelected(false); // No media selected after loading
 
                         // Creating player depending on media type
@@ -158,14 +169,17 @@ public final class Main {
                         // Loading media
                         player.load(command.getTimestamp(), user);
 
-                        objectNode.put("message", "Playback loaded successfully.");
+                        objectNode.put("message",
+                                "Playback loaded successfully.");
                     } else {
-                        objectNode.put("message", "Please select a source before attempting to load.");
+                        objectNode.put("message",
+                                "Please select a source before attempting to load.");
                     }
                     break;
                 case "playPause":
                     if (player == null || !player.isLoaded()) {
-                        objectNode.put("message","Please load a source before attempting to pause or resume playback.");
+                        objectNode.put("message",
+                                "Please load a source before attempting to pause or resume playback.");
                         break;
                     }
 
@@ -180,7 +194,8 @@ public final class Main {
                     break;
                 case "repeat":
                     if (player == null || !player.isLoaded()) {
-                        objectNode.put("message","Please load a source before setting the repeat status.");
+                        objectNode.put("message",
+                                "Please load a source before setting the repeat status.");
                         break;
                     }
 
@@ -189,14 +204,17 @@ public final class Main {
 
                     if (player.isLoaded()) {
                         player.repeat();
-                        objectNode.put("message","Repeat mode changed to " + status.getRepeat().toLowerCase() + ".");
+                        objectNode.put("message",
+                                "Repeat mode changed to " + status.getRepeat().toLowerCase() + ".");
                     } else {
-                        objectNode.put("message","Please load a source before setting the repeat status.");
+                        objectNode.put("message",
+                                "Please load a source before setting the repeat status.");
                     }
                     break;
                 case "shuffle":
                     if(player == null || !player.isLoaded()) {
-                        objectNode.put("message", "Please load a source before using the shuffle function.");
+                        objectNode.put("message",
+                                "Please load a source before using the shuffle function.");
                         break;
                     }
 
@@ -206,12 +224,14 @@ public final class Main {
                     if (player.isLoaded()) {
                         player.shuffle(objectNode, command.getSeed());
                     } else {
-                        objectNode.put("message","Please load a source before using the shuffle function.");
+                        objectNode.put("message",
+                                "Please load a source before using the shuffle function.");
                     }
                     break;
                 case "forward":
                     if(player == null || !player.isLoaded()) {
-                        objectNode.put("message", "Please load a source before attempting to forward.");
+                        objectNode.put("message",
+                                "Please load a source before attempting to forward.");
                         break;
                     }
 
@@ -221,12 +241,14 @@ public final class Main {
                     if (player.isLoaded()) {
                         player.forward(user, objectNode);
                     } else {
-                        objectNode.put("message","Please load a source before attempting to forward.");
+                        objectNode.put("message",
+                                "Please load a source before attempting to forward.");
                     }
                     break;
                 case "backward":
                     if(player == null || !player.isLoaded()) {
-                        objectNode.put("message", "Please select a source before rewinding.");
+                        objectNode.put("message",
+                                "Please select a source before rewinding.");
                         break;
                     }
 
@@ -241,7 +263,8 @@ public final class Main {
                     break;
                 case "next":
                     if(player == null || !player.isLoaded()) {
-                        objectNode.put("message", "Please load a source before skipping to the next track.");
+                        objectNode.put("message",
+                                "Please load a source before skipping to the next track.");
                         break;
                     }
 
@@ -251,12 +274,14 @@ public final class Main {
                     if (player.isLoaded()) {
                         player.next(user, objectNode, command.getTimestamp());
                     } else {
-                        objectNode.put("message","Please load a source before skipping to the next track.");
+                        objectNode.put("message",
+                                "Please load a source before skipping to the next track.");
                     }
                     break;
                 case "prev":
                     if(player == null || !player.isLoaded()) {
-                        objectNode.put("message", "Please load a source before returning to the previous track.");
+                        objectNode.put("message",
+                                "Please load a source before returning to the previous track.");
                         break;
                     }
 
@@ -266,7 +291,8 @@ public final class Main {
                     if (player.isLoaded()) {
                         player.prev(user, objectNode, command.getTimestamp());
                     } else {
-                        objectNode.put("message","Please load a source before returning to the previous track.");
+                        objectNode.put("message",
+                                "Please load a source before returning to the previous track.");
                     }
                     break;
                 case "status":
@@ -279,22 +305,26 @@ public final class Main {
                     if (player != null && player.isLoaded()) {
                         player.like(user, objectNode);
                     } else {
-                        objectNode.put("message", "Please load a source before liking or unliking.");
+                        objectNode.put("message",
+                                "Please load a source before liking or unliking.");
                     }
                     break;
                 case "addRemoveInPlaylist":
                     if(player != null && player.isLoaded()) {
                         player.addRemoveInPlaylist(user, command.getPlaylistId(), objectNode);
                     } else {
-                        objectNode.put("message", "Please load a source before adding to or removing from the playlist.");
+                        objectNode.put("message",
+                            "Please load a source before adding to or removing from the playlist.");
                     }
                     break;
                 case "createPlaylist":
                     if(Playlist.exists(command.getPlaylistName(), playlists)) {
-                        objectNode.put("message","A playlist with the same name already exists.");
+                        objectNode.put("message",
+                                "A playlist with the same name already exists.");
                     } else {
                         // Creating new playlist
-                        Playlist playlist = new Playlist(command.getPlaylistName(), user.getPlaylists().size() + 1);
+                        Playlist playlist = new Playlist(command.getPlaylistName(),
+                                user.getPlaylists().size() + 1);
                         playlist.setCreatedBy(command.getUsername());
 
                         // Adding playlist to user and playlist array
@@ -317,13 +347,14 @@ public final class Main {
                     if (user.getPlaylists().size()  < command.getPlaylistId()) {
                         objectNode.put("message", "The specified playlist ID is too high.");
                     } else {
-                        Playlist.switchVisibility(playlists, command.getPlaylistId(), user, objectNode);
+                        Playlist.switchVisibility(command.getPlaylistId(), user, objectNode);
                     }
                     search.setSelected(false);
                     break;
                 case "follow":
                     if(!search.isSelected()) {
-                        objectNode.put("message", "Please select a source before following or unfollowing.");
+                        objectNode.put("message",
+                                "Please select a source before following or unfollowing.");
                         break;
                     }
                     if (search.getSelectedPlaylist() != null) {

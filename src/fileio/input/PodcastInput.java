@@ -9,6 +9,7 @@ public final class PodcastInput {
 
     public PodcastInput() {
     }
+
     public String getName() {
         return name;
     }

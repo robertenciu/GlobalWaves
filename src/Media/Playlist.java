@@ -1,12 +1,9 @@
-package main;
+package Media;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fileio.input.SongInput;
-import fileio.input.UserInput;
-
+import main.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
@@ -15,8 +12,8 @@ public final class Playlist {
     private String createdBy;
     private int followers;
     private final Integer playlistId;
-    private ArrayList<SongInput> songs;
-    private ArrayList<SongInput> originalOrder;
+    private ArrayList<Song> songs;
+    private ArrayList<Song> originalOrder;
     private String visibility;
     public Playlist(String name, int id) {
         this.visibility = "public";
@@ -40,9 +37,8 @@ public final class Playlist {
     public static void unshuffleSongs(final Playlist playlist) {
         Collections.copy(playlist.getSongs(), playlist.originalOrder);
     }
-    public static void switchVisibility(ArrayList<Playlist> playlists,
-                                        Integer playlistId,
-                                        UserInput user,
+    public static void switchVisibility(final Integer playlistId,
+                                        final User user,
                                         final ObjectNode objectNode) {
         Playlist playlist = getPlaylistFromId(user, playlistId);
         assert playlist != null;
@@ -59,7 +55,7 @@ public final class Playlist {
             objectNode.put("message", "Visibility status updated successfully to public.");
         }
     }
-    public static void follow(UserInput user, Playlist playlist, ObjectNode objectNode) {
+    public static void follow(User user, Playlist playlist, ObjectNode objectNode) {
         if (user.getPlaylists().contains(playlist)) {
             objectNode.put("message", "You cannot follow or unfollow your own playlist.");
             return;
@@ -77,32 +73,41 @@ public final class Playlist {
             objectNode.put("message", "Playlist followed successfully.");
         }
     }
-    public static Playlist getPlaylistFromId(UserInput user, Integer playlistId) {
+    public static Playlist getPlaylistFromId(User user, Integer playlistId) {
         ArrayList<Playlist> playlists = user.getPlaylists();
         for(Playlist playlist : playlists)
             if(playlist.getPlaylistId().equals(playlistId))
                 return playlist;
         return null;
     }
-    public static SongInput nextSong(SongInput currentSong, Playlist playlist) {
-        for(int i = 0; i < playlist.getSongs().size() - 1; i++)
-            if(playlist.getSongs().get(i).getName().equals(currentSong.getName()))
+    public static Song nextSong(Song song, Playlist playlist) {
+        for (int i = 0; i < playlist.getSongs().size() - 1; i++)
+            if (playlist.getSongs().get(i).getName().equals(song.getName()))
                 return playlist.getSongs().get(i + 1);
-        if(playlist.getSongs().get(playlist.getSongs().size() - 1).getName().equals(currentSong.getName()))
+        if (lastSong(playlist).getName().equals(song.getName()))
             return firstSong(playlist);
         return null;
     }
-    public static SongInput firstSong(Playlist playlist) {
+    public static Song prevSong(Song song, Playlist playlist) {
+        for (int i = 1; i < playlist.getSongs().size(); i++)
+            if (playlist.getSongs().get(i).getName().equals(song.getName()))
+                return playlist.getSongs().get(i - 1);
+        return Playlist.firstSong(playlist);
+    }
+    public static Song firstSong(Playlist playlist) {
         return playlist.getSongs().get(0);
     }
-    public static void showPlaylists(ObjectNode objectNode, UserInput user) {
+    public static Song lastSong(Playlist playlist) {
+        return playlist.getSongs().get(playlist.getSongs().size() - 1);
+    }
+    public static void showPlaylists(ObjectNode objectNode, User user) {
         ArrayNode result = objectNode.putArray("result");
 
         for (Playlist playlist : user.getPlaylists()) {
             ObjectNode playlistObject = result.addObject();
             playlistObject.put("name", playlist.getName());
             ArrayNode songsArray = playlistObject.putArray("songs");
-            for (SongInput song : playlist.getSongs()) {
+            for (Song song : playlist.getSongs()) {
                 songsArray.add(song.getName());
             }
             playlistObject.put("visibility", playlist.getVisibility());
@@ -145,11 +150,11 @@ public final class Playlist {
         return this.playlistId;
     }
 
-    public ArrayList<SongInput> getSongs() {
+    public ArrayList<Song> getSongs() {
         return this.songs;
     }
 
-    public void setSongs(ArrayList<SongInput> songs) {
+    public void setSongs(ArrayList<Song> songs) {
         this.songs = songs;
     }
 }

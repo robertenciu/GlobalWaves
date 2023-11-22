@@ -1,10 +1,9 @@
 package main;
 
+import Media.Playlist;
 import fileio.input.SongInput;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class Statistics {

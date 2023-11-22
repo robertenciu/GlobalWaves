@@ -1,8 +1,12 @@
-package fileio.input;
+package Media;
+
+import fileio.input.LibraryInput;
+import fileio.input.PodcastInput;
+import fileio.input.SongInput;
 
 import java.util.ArrayList;
 
-public final class SongInput {
+public final class Song {
     private String name;
     private Integer duration;
     private String album;
@@ -11,8 +15,38 @@ public final class SongInput {
     private String genre;
     private Integer releaseYear;
     private String artist;
+    private int likes;
 
-    public SongInput() {
+    public Song(SongInput song) {
+        this.name = song.getName();
+        this.duration = song.getDuration();
+        this.album = song.getAlbum();
+        this.tags = song.getTags();
+        this.lyrics = song.getLyrics();
+        this.genre = song.getGenre();
+        this.releaseYear = song.getReleaseYear();
+        this.artist = song.getArtist();
+    }
+
+    public static ArrayList<Song> copySongs(LibraryInput library) {
+        ArrayList<Song> songs = new ArrayList<>();
+        for (SongInput songInput : library.getSongs()) {
+            Song song = new Song(songInput);
+            songs.add(song);
+        }
+        return songs;
+    }
+
+    public void setReleaseYear(Integer releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
     public String getName() {
