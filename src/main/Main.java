@@ -1,15 +1,17 @@
 package main;
 
-import Player.AbstractPlayer;
-import SearchBar.Search;
+import player.AbstractPlayer;
+import searchbar.Search;
 import checker.Checker;
 import checker.CheckerConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fileio.input.*;
-import Media.*;
+import fileio.input.LibraryInput;
+import media.Song;
+import media.Playlist;
+import media.Podcast;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,18 +50,23 @@ public final class Main {
             }
             resultFile.delete();
         }
-        Files.createDirectories(path);
         int i = 0;
+        Files.createDirectories(path);
         for (File file : Objects.requireNonNull(directory.listFiles())) {
             if (file.getName().startsWith("library")) {
                 continue;
             }
+            if(++i < 16)
+                continue;
 
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
             boolean isCreated = out.createNewFile();
             if (isCreated) {
                 action(file.getName(), filepath);
+            }
+            if (i == 16) {
+                break;
             }
         }
 
@@ -91,6 +98,7 @@ public final class Main {
         ArrayList<Podcast> podcasts = Podcast.copyPodcasts(library);
         ArrayList<User> users = User.copyUsers(library);
 
+
         // Initiating search
         Search search = null;
         ArrayNode searchResult = null;
@@ -112,8 +120,11 @@ public final class Main {
             // Setting output json node (standard output for all commands)
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", command.getCommand());
-            if (user != null)
+            if (user != null) {
+                search = user.search;
+                player = user.player;
                 objectNode.put("user", command.getUsername());
+            }
             objectNode.put("timestamp", command.getTimestamp());
 
             switch (command.getCommand()) {
@@ -127,7 +138,9 @@ public final class Main {
                     status.reset();
 
                     // New search
-                    search = Search.newSearch(command.getType(),songs, podcasts, playlists);
+                    assert user != null;
+                    user.search = Search.newSearch(command.getType(), songs, podcasts, playlists);
+                    search = user.search;
 
                     // Updating search result array
                     searchResult = search.getSearchResultArray(filter, user);
@@ -138,7 +151,7 @@ public final class Main {
                     objectNode.put("results", searchResult);
                     break;
                 case "select":
-                    if (searchResult == null) {
+                    if (search == null || searchResult == null) {
                         objectNode.put("message",
                                 "Please conduct a search before making a selection.");
                         break;
@@ -155,12 +168,18 @@ public final class Main {
                     searchResult = null;
                     break;
                 case "load":
-                    assert search != null;
+                    if (search == null) {
+                        objectNode.put("message",
+                                "Please select a source before attempting to load.");
+                        break;
+                    }
                     if (search.isSelected()) {
                         search.setSelected(false); // No media selected after loading
 
                         // Creating player depending on media type
-                        player = AbstractPlayer.createPlayer(search.getType());
+                        assert user != null;
+                        user.player = AbstractPlayer.createPlayer(search);
+                        player = user.player;
                         if (player == null) {
                             System.out.println("Incorrect type");
                             break;
@@ -321,7 +340,7 @@ public final class Main {
                     if(Playlist.exists(command.getPlaylistName(), playlists)) {
                         objectNode.put("message",
                                 "A playlist with the same name already exists.");
-                    } else {
+                    } else if (user != null){
                         // Creating new playlist
                         Playlist playlist = new Playlist(command.getPlaylistName(),
                                 user.getPlaylists().size() + 1);
@@ -333,38 +352,41 @@ public final class Main {
 
                         objectNode.put("message","Playlist created successfully.");
                     }
-                    search.setSelected(false);
                     break;
                 case "showPlaylists":
-                    Playlist.showPlaylists(objectNode, user);
-                    search.setSelected(false);
+                    if (user != null) {
+                        Playlist.showPlaylists(objectNode, user);
+                    }
+                    search = null;
                     break;
                 case "showPreferredSongs":
-                    user.showPreferredSongs(objectNode);
-                    search.setSelected(false);
+                    if (user != null) {
+                        user.showPreferredSongs(objectNode);
+                    }
+                    search = null;
                     break;
                 case "switchVisibility":
-                    if (user.getPlaylists().size()  < command.getPlaylistId()) {
+                    if (user != null && user.getPlaylists().size()  < command.getPlaylistId()) {
                         objectNode.put("message", "The specified playlist ID is too high.");
                     } else {
                         Playlist.switchVisibility(command.getPlaylistId(), user, objectNode);
                     }
-                    search.setSelected(false);
+                    search = null;
                     break;
                 case "follow":
-                    if(!search.isSelected()) {
+                    if(search == null || !search.isSelected()) {
                         objectNode.put("message",
                                 "Please select a source before following or unfollowing.");
                         break;
                     }
-                    if (search.getSelectedPlaylist() != null) {
+                    if (search.getSelectedPlaylist() != null && user != null) {
                         Playlist.follow(user, search.getSelectedPlaylist(), objectNode);
                     } else {
                         objectNode.put("message", "The selected source is not a playlist.");
                     }
                     break;
                 case "getTop5Songs":
-                    Statistics statistic = new Statistics(library.getSongs(), playlists);
+                    Statistics statistic = new Statistics(songs, playlists);
                     ArrayNode result = objectNode.putArray("result");
                     ArrayList<String> top5 = statistic.getTop5Songs();
                     for (String song : top5) {
@@ -372,7 +394,7 @@ public final class Main {
                     }
                     break;
                 case "getTop5Playlists":
-                    Statistics statisticPlaylist = new Statistics(library.getSongs(), playlists);
+                    Statistics statisticPlaylist = new Statistics(songs, playlists);
                     ArrayNode resultPlaylist = objectNode.putArray("result");
                     ArrayList<String> top5Playlists = statisticPlaylist.getTop5Playlists();
                     for (String playlist : top5Playlists) {

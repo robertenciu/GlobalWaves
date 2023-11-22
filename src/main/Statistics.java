@@ -1,60 +1,60 @@
 package main;
 
-import Media.Playlist;
-import fileio.input.SongInput;
+import media.Song;
+import media.Playlist;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Statistics {
-    private final ArrayList<SongInput> songs;
+public final class Statistics {
+    private final ArrayList<Song> songs;
     private final ArrayList<Playlist> playlists;
+    private final int topMaxSize = 5;
 
-    public Statistics(ArrayList<SongInput> songs, ArrayList<Playlist> playlists) {
+    public Statistics(final ArrayList<Song> songs,
+                      final ArrayList<Playlist> playlists) {
         this.songs = songs;
         this.playlists = playlists;
     }
     public ArrayList<String> getTop5Songs() {
-        ArrayList<String> top5 = new ArrayList<>();
-        songs.sort(new Comparator<SongInput>() {
-            @Override
-            public int compare(SongInput o1, SongInput o2) {
-                if (o1.getLikes() < o2.getLikes()) {
-                    return 1;
-                } else if (o1.getLikes() > o2.getLikes()) {
-                    return -1;
-                }
-                return 0;
+        ArrayList<String> top = new ArrayList<>();
+
+        songs.sort((o1, o2) -> {
+            if (o1.getLikes() < o2.getLikes()) {
+                return 1;
+            } else if (o1.getLikes() > o2.getLikes()) {
+                return -1;
             }
+            return 0;
         });
-        for (SongInput song : songs.subList(0, 5)) {
-            top5.add(song.getName());
+
+        for (Song song : songs.subList(0, topMaxSize)) {
+            top.add(song.getName());
         }
-        return top5;
+        return top;
     }
     public ArrayList<String> getTop5Playlists() {
-        ArrayList<String> top5 = new ArrayList<>();
-        this.playlists.sort(new Comparator<Playlist>() {
-            @Override
-            public int compare(Playlist o1, Playlist o2) {
-                if (o1.getFollowers() < o2.getFollowers()) {
-                    return 1;
-                } else if (o1.getFollowers() > o2.getFollowers()) {
-                    return -1;
-                }
-                return 0;
+        ArrayList<String> top = new ArrayList<>();
+
+        this.playlists.sort((o1, o2) -> {
+            if (o1.getFollowers() < o2.getFollowers()) {
+                return 1;
+            } else if (o1.getFollowers() > o2.getFollowers()) {
+                return -1;
             }
+            return 0;
         });
+
         int iter = 0;
         for (Playlist playlist : playlists) {
-            if (iter == 5) {
+            if (iter == topMaxSize) {
                 break;
             }
             if (playlist.getVisibility().equals("public")) {
-                top5.add(playlist.getName());
+                top.add(playlist.getName());
                 iter++;
             }
         }
-        return top5;
+        return top;
     }
 }

@@ -2,8 +2,14 @@ package main;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import Media.*;
-import fileio.input.*;
+import media.Song;
+import media.Playlist;
+import media.Episode;
+import fileio.input.UserInput;
+import fileio.input.LibraryInput;
+import player.AbstractPlayer;
+import player.PlaylistPlayer;
+import searchbar.Search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,11 +20,12 @@ public final class User {
     private String city;
     private ArrayList<Song> likedSongs;
     private final ArrayList<Playlist> playlists;
-    private int numberOfPlaylists;
     private final HashMap<String, Episode> lastEpisodes;
     private final ArrayList<Playlist> followedPlaylists;
+    public Search search;
+    public AbstractPlayer player;
 
-    public User(UserInput user) {
+    public User(final UserInput user) {
         likedSongs = new ArrayList<>();
         playlists = new ArrayList<>();
         lastEpisodes = new HashMap<>();
@@ -27,7 +34,7 @@ public final class User {
         this.age = user.getAge();
         this.city = user.getCity();
     }
-    public static ArrayList<User> copyUsers(LibraryInput library) {
+    public static ArrayList<User> copyUsers(final LibraryInput library) {
         ArrayList<User> users = new ArrayList<>();
         for (UserInput userInput : library.getUsers()) {
             User user = new User(userInput);
@@ -53,6 +60,14 @@ public final class User {
         }
         return null;
     }
+    public Playlist getPlaylist(final String name) {
+        for (Playlist playlist : playlists) {
+            if (playlist.getName().equals(name)) {
+                return playlist;
+            }
+        }
+        return null;
+    }
     public void showPreferredSongs(final ObjectNode objectNode) {
         ArrayNode result = objectNode.putArray("result");
         if (likedSongs.isEmpty()) {
@@ -63,14 +78,6 @@ public final class User {
                 result.add(song.getName());
             }
         }
-    }
-
-    public int getNumberOfPlaylists() {
-        return numberOfPlaylists;
-    }
-
-    public void setNumberOfPlaylists(int numberOfPlaylists) {
-        this.numberOfPlaylists = numberOfPlaylists;
     }
 
     public ArrayList<Playlist> getFollowedPlaylists() {

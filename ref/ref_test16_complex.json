@@ -4829,16 +4829,16 @@
   "command" : "next",
   "user" : "bob35",
   "timestamp" : 5610,
-  "message" : "Skipped to next track successfully. The current track is Bohemian Rhapsody."
+  "message" : "Please load a source before skipping to the next track."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 5610,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -5011,16 +5011,16 @@
   "command" : "next",
   "user" : "bob35",
   "timestamp" : 5710,
-  "message" : "Skipped to next track successfully. The current track is Bohemian Rhapsody."
+  "message" : "Please load a source before skipping to the next track."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 5710,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -5192,17 +5192,17 @@
   "command" : "prev",
   "user" : "bob35",
   "timestamp" : 5810,
-  "message" : "Returned to previous track successfully. The current track is Bohemian Rhapsody."
+  "message" : "Please load a source before returning to the previous track."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 5810,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
-    "remainedTime" : 355,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "playPause",
@@ -5385,17 +5385,17 @@
   "command" : "like",
   "user" : "bob35",
   "timestamp" : 5910,
-  "message" : "Like registered successfully."
+  "message" : "Please load a source before liking or unliking."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 5910,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
-    "remainedTime" : 255,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "switchVisibility",
@@ -5556,17 +5556,17 @@
   "command" : "shuffle",
   "user" : "bob35",
   "timestamp" : 6010,
-  "message" : "Shuffle function deactivated successfully."
+  "message" : "Please load a source before using the shuffle function."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6010,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
-    "remainedTime" : 155,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
     "shuffle" : false,
-    "paused" : false
+    "paused" : true
   }
 }, {
   "command" : "like",
@@ -5588,16 +5588,16 @@
   "command" : "next",
   "user" : "david27",
   "timestamp" : 6030,
-  "message" : "Skipped to next track successfully. The current track is Under Pressure."
+  "message" : "Please load a source before skipping to the next track."
 }, {
   "command" : "status",
   "user" : "david27",
   "timestamp" : 6030,
   "stats" : {
-    "name" : "Under Pressure",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -5721,17 +5721,17 @@
   "command" : "shuffle",
   "user" : "bob35",
   "timestamp" : 6110,
-  "message" : "Shuffle function activated successfully."
+  "message" : "Please load a source before using the shuffle function."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6110,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
-    "remainedTime" : 55,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "playPause",
@@ -5753,17 +5753,17 @@
   "command" : "playPause",
   "user" : "david27",
   "timestamp" : 6130,
-  "message" : "Playback resumed successfully."
+  "message" : "Please load a source before attempting to pause or resume playback."
 }, {
   "command" : "status",
   "user" : "david27",
   "timestamp" : 6130,
   "stats" : {
-    "name" : "Under Pressure",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "shuffle",
@@ -5907,17 +5907,17 @@
   "command" : "like",
   "user" : "bob35",
   "timestamp" : 6210,
-  "message" : "Like registered successfully."
+  "message" : "Please load a source before liking or unliking."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6210,
   "stats" : {
-    "name" : "The Unforgiven",
-    "remainedTime" : 341,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "playPause",
@@ -6094,17 +6094,17 @@
   "command" : "like",
   "user" : "bob35",
   "timestamp" : 6310,
-  "message" : "Unlike registered successfully."
+  "message" : "Please load a source before liking or unliking."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6310,
   "stats" : {
-    "name" : "The Unforgiven",
-    "remainedTime" : 241,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "like",
@@ -6266,22 +6266,22 @@
   "user" : "bob35",
   "timestamp" : 6410,
   "stats" : {
-    "name" : "The Unforgiven",
-    "remainedTime" : 141,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6410,
   "stats" : {
-    "name" : "The Unforgiven",
-    "remainedTime" : 141,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "switchVisibility",
@@ -6441,16 +6441,16 @@
   "command" : "next",
   "user" : "bob35",
   "timestamp" : 6510,
-  "message" : "Skipped to next track successfully. The current track is The Unforgiven."
+  "message" : "Please load a source before skipping to the next track."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6510,
   "stats" : {
-    "name" : "The Unforgiven",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -6617,16 +6617,16 @@
   "command" : "next",
   "user" : "bob35",
   "timestamp" : 6610,
-  "message" : "Skipped to next track successfully. The current track is The Unforgiven."
+  "message" : "Please load a source before skipping to the next track."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6610,
   "stats" : {
-    "name" : "The Unforgiven",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -6787,16 +6787,16 @@
   "command" : "like",
   "user" : "bob35",
   "timestamp" : 6710,
-  "message" : "Like registered successfully."
+  "message" : "Please load a source before liking or unliking."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6710,
   "stats" : {
-    "name" : "The Unforgiven",
+    "name" : "",
     "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -6979,22 +6979,22 @@
   "command" : "prev",
   "user" : "bob35",
   "timestamp" : 6810,
-  "message" : "Returned to previous track successfully. The current track is The Unforgiven."
+  "message" : "Please load a source before returning to the previous track."
 }, {
   "command" : "prev",
   "user" : "bob35",
   "timestamp" : 6810,
-  "message" : "Returned to previous track successfully. The current track is Bohemian Rhapsody."
+  "message" : "Please load a source before returning to the previous track."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6810,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
-    "remainedTime" : 355,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
-    "paused" : false
+    "shuffle" : false,
+    "paused" : true
   }
 }, {
   "command" : "repeat",
@@ -7165,16 +7165,16 @@
   "command" : "playPause",
   "user" : "bob35",
   "timestamp" : 6910,
-  "message" : "Playback paused successfully."
+  "message" : "Please load a source before attempting to pause or resume playback."
 }, {
   "command" : "status",
   "user" : "bob35",
   "timestamp" : 6910,
   "stats" : {
-    "name" : "Bohemian Rhapsody",
-    "remainedTime" : 255,
+    "name" : "",
+    "remainedTime" : 0,
     "repeat" : "No Repeat",
-    "shuffle" : true,
+    "shuffle" : false,
     "paused" : true
   }
 }, {
@@ -7549,7 +7549,7 @@
   "command" : "follow",
   "user" : "david27",
   "timestamp" : 7120,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "emily30",
@@ -7901,7 +7901,7 @@
   "command" : "follow",
   "user" : "frank21",
   "timestamp" : 7340,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "grace25",
@@ -8381,7 +8381,7 @@
   "command" : "follow",
   "user" : "frank21",
   "timestamp" : 7640,
-  "message" : "Playlist unfollowed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "grace25",
@@ -8605,7 +8605,7 @@
   "command" : "follow",
   "user" : "jack29",
   "timestamp" : 7780,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "alice22",
@@ -8749,7 +8749,7 @@
   "command" : "follow",
   "user" : "irene33",
   "timestamp" : 7870,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "jack29",
@@ -8973,7 +8973,7 @@
   "command" : "follow",
   "user" : "carol19",
   "timestamp" : 8010,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "david27",
@@ -9229,7 +9229,7 @@
   "command" : "follow",
   "user" : "irene33",
   "timestamp" : 8170,
-  "message" : "Playlist unfollowed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "jack29",
@@ -9437,7 +9437,7 @@
   "command" : "follow",
   "user" : "bob35",
   "timestamp" : 8300,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "carol19",
@@ -9453,7 +9453,7 @@
   "command" : "follow",
   "user" : "carol19",
   "timestamp" : 8310,
-  "message" : "Playlist unfollowed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "david27",
@@ -9629,7 +9629,7 @@
   "command" : "follow",
   "user" : "david27",
   "timestamp" : 8420,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "emily30",
@@ -9661,7 +9661,7 @@
   "command" : "follow",
   "user" : "frank21",
   "timestamp" : 8440,
-  "message" : "Playlist followed successfully."
+  "message" : "You cannot follow or unfollow your own playlist."
 }, {
   "command" : "search",
   "user" : "grace25",
@@ -9759,13 +9759,13 @@
     "name" : "Dynamic Tracks Trek #2",
     "songs" : [ "Bohemian Rhapsody", "The Unforgiven", "Begin Again" ],
     "visibility" : "public",
-    "followers" : 7
+    "followers" : 6
   } ]
 }, {
   "command" : "showPreferredSongs",
   "user" : "bob35",
   "timestamp" : 8500,
-  "result" : [ "Bohemian Rhapsody", "The Unforgiven" ]
+  "result" : [ ]
 }, {
   "command" : "showPlaylists",
   "user" : "carol19",
@@ -9794,12 +9794,12 @@
     "name" : "Electric Grooves Dream #1",
     "songs" : [ "Dream On", "Start Me Up", "Under Pressure" ],
     "visibility" : "private",
-    "followers" : 1
+    "followers" : 0
   }, {
     "name" : "Groovy Beats Expedition #2",
     "songs" : [ "Don't", "Sad But True", "Dream On" ],
     "visibility" : "private",
-    "followers" : 1
+    "followers" : 0
   } ]
 }, {
   "command" : "showPreferredSongs",
@@ -9839,7 +9839,7 @@
     "name" : "Breezy Bangers Quest #2",
     "songs" : [ "Castle on the Hill", "Maps", "Blank Space", "Delicate", "Happier", "Big Pimpin'" ],
     "visibility" : "public",
-    "followers" : 4
+    "followers" : 3
   } ]
 }, {
   "command" : "showPreferredSongs",
@@ -9914,7 +9914,7 @@
     "name" : "Classic Harmonies Quest #1",
     "songs" : [ "Big Pimpin'", "Maps", "Money Trees", "Gimme Shelter", "Start Me Up" ],
     "visibility" : "public",
-    "followers" : 5
+    "followers" : 4
   }, {
     "name" : "Mellow Tracks Safari #2",
     "songs" : [ "Maps", "The Man", "Blank Space", "Money Trees", "Shape of You", "The Unforgiven", "Big Pimpin'", "Love Story" ],
@@ -9929,9 +9929,9 @@
 }, {
   "command" : "getTop5Playlists",
   "timestamp" : 8580,
-  "result" : [ "Dynamic Tracks Trek #2", "Electric Bangers Dream #1", "Classic Harmonies Quest #1", "Breezy Bangers Quest #2", "Classic Tunes Dream #1" ]
+  "result" : [ "Dynamic Tracks Trek #2", "Electric Bangers Dream #1", "Classic Tunes Dream #1", "Epic Tracks Safari #1", "Classic Harmonies Quest #1" ]
 }, {
   "command" : "getTop5Songs",
   "timestamp" : 8580,
-  "result" : [ "Don't", "Bohemian Rhapsody", "The Unforgiven", "Whatever You Need", "Maps" ]
+  "result" : [ "Don't", "Whatever You Need", "Maps", "The Man", "Happier" ]
 } ]
