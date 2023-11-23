@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import main.User;
 
 public final class PlaylistPlayer extends AbstractPlayer {
+    private boolean reachedPlaylistEnd;
     public PlaylistPlayer(final Playlist playlist) {
         super.loadedPlaylist = playlist;
     }
@@ -77,9 +78,15 @@ public final class PlaylistPlayer extends AbstractPlayer {
             default:
                 break;
         }
-
+        checkReachedPlaylistEnd();
         // Setting timeUpdated to last call of updateStatus timestamp
         super.timeUpdated = timestamp;
+    }
+
+    private void checkReachedPlaylistEnd() {
+        if (loadedSong == loadedPlaylist.lastSong()) {
+            reachedPlaylistEnd = true;
+        }
     }
 
     @Override
@@ -113,7 +120,18 @@ public final class PlaylistPlayer extends AbstractPlayer {
 
     public void next(final User user, final ObjectNode obj, final Integer timestamp) {
         Song nextSong = loadedPlaylist.nextSong(loadedSong);
+        Song firstSong = loadedPlaylist.firstSong();
         assert nextSong != null;
+
+//        if (status.getRepeat().equals("No Repeat") && nextSong.equals(firstSong)) {
+//            status.reset();
+//            super.loadedSong = null;
+//            super.isLoaded = false;
+//        } else {
+//            super.loadedSong = nextSong;
+//            status.setRemainedTime(loadedSong.getDuration());
+//            status.setName(loadedSong.getName());
+//        }
 
         switch (status.getRepeat()) {
             case "No Repeat":
@@ -125,6 +143,7 @@ public final class PlaylistPlayer extends AbstractPlayer {
                 }
             case "Repeat All":
                 super.loadedSong = nextSong;
+            case "Repeat Current Song":
                 status.setRemainedTime(loadedSong.getDuration());
                 status.setName(loadedSong.getName());
             default:
@@ -149,11 +168,20 @@ public final class PlaylistPlayer extends AbstractPlayer {
             status.setRemainedTime(loadedSong.getDuration());
         } else {
             Song prev = loadedPlaylist.prevSong(loadedSong);
+            if (!status.getRepeat().equals("Repeat All") && prev == loadedPlaylist.lastSong()) {
+                prev = loadedPlaylist.firstSong();
+            } else if (prev == loadedPlaylist.lastSong()) {
+                if (!reachedPlaylistEnd) {
+                    prev = loadedPlaylist.firstSong();
+                }
+            }
+
             status.setRemainedTime(prev.getDuration());
             status.setName(prev.getName());
             super.loadedSong = prev;
         }
         super.timeUpdated = timestamp;
+        status.setPaused(false);
         obj.put("message",
                 "Returned to previous track successfully. The current track is " +
                         status.getName() + ".");

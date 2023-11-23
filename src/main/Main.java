@@ -56,17 +56,12 @@ public final class Main {
             if (file.getName().startsWith("library")) {
                 continue;
             }
-//            if(++i < 16)
-//                continue;
 
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
             boolean isCreated = out.createNewFile();
             if (isCreated) {
                 action(file.getName(), filepath);
-            }
-            if (++i == 16) {
-                break;
             }
         }
 
@@ -326,6 +321,7 @@ public final class Main {
                     break;
                 case "like":
                     if (player != null && player.isLoaded()) {
+                        player.updateStatus(command.getTimestamp(), user);
                         player.like(user, objectNode);
                     } else {
                         objectNode.put("message",

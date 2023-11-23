@@ -28,6 +28,7 @@ public final class Playlist {
         this.visibility = "public";
         this.name = name;
         this.songs = new ArrayList<>();
+        this.originalOrder = new ArrayList<>();
         this.playlistId = id;
     }
 
@@ -102,7 +103,7 @@ public final class Playlist {
         for (int i = 1; i < this.getSongs().size(); i++)
             if (this.getSongs().get(i).getName().equals(song.getName()))
                 return this.getSongs().get(i - 1);
-        return firstSong();
+        return lastSong();
     }
     public Song firstSong() {
         return this.getSongs().get(0);
@@ -117,7 +118,7 @@ public final class Playlist {
             ObjectNode playlistObject = result.addObject();
             playlistObject.put("name", playlist.getName());
             ArrayNode songsArray = playlistObject.putArray("songs");
-            for (Song song : playlist.getSongs()) {
+            for (Song song : playlist.getOriginalOrder()) {
                 songsArray.add(song.getName());
             }
             playlistObject.put("visibility", playlist.getVisibility());

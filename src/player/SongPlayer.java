@@ -21,9 +21,11 @@ public final class SongPlayer extends AbstractPlayer {
             return;
         }
         if (playlist.getSongs().contains(loadedSong)) {
+            playlist.getOriginalOrder().remove(loadedSong);
             playlist.getSongs().remove(loadedSong);
             obj.put("message", "Successfully removed from playlist.");
         } else {
+            playlist.getOriginalOrder().add(loadedSong);
             playlist.getSongs().add(loadedSong);
             obj.put("message", "Successfully added to playlist.");
         }
