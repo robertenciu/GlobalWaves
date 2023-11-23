@@ -11,7 +11,7 @@ public final class PlaylistPlayer extends AbstractPlayer {
 
     @Override
     public void load(final Integer timestamp, final User user) {
-        super.loadedSong = Playlist.firstSong(loadedPlaylist, user);
+        super.loadedSong = loadedPlaylist.firstSong();
         super.isLoaded = true;
 
         status.setRemainedTime(loadedSong.getDuration());
@@ -25,15 +25,14 @@ public final class PlaylistPlayer extends AbstractPlayer {
     public void like(final User user, final ObjectNode obj) {
         new SongPlayer(loadedSong).like(user, obj);
     }
-    private void getCurrentSong(final int timeElapsed, final User user) {
+    private void getCurrentSong(final int timeElapsed) {
         int timeRemaining = timeElapsed;
         Song nextSong;
         do {
             timeRemaining = timeRemaining - status.getRemainedTime();
-            nextSong = Playlist.nextSong(loadedSong, loadedPlaylist);
-            assert nextSong != null;
+            nextSong = loadedPlaylist.nextSong(loadedSong);
 
-            if (nextSong.equals(Playlist.firstSong(loadedPlaylist, user)) &&
+            if (nextSong.equals(loadedPlaylist.firstSong()) &&
                                                     status.getRepeat().equals("No Repeat")) {
                 handleNoRepeat();
                 return;
@@ -68,7 +67,7 @@ public final class PlaylistPlayer extends AbstractPlayer {
         switch (status.getRepeat()) {
             case "No Repeat":
             case "Repeat All":
-                this.getCurrentSong(timeElapsed, user);
+                this.getCurrentSong(timeElapsed);
                 break;
             case "Repeat Current Song":
                 timeElapsed -= status.getRemainedTime();
@@ -102,23 +101,23 @@ public final class PlaylistPlayer extends AbstractPlayer {
 
     public void shuffle(final ObjectNode obj, final long seed) {
         if (status.isShuffle()) {
-            Playlist.unshuffleSongs(loadedPlaylist);
+            loadedPlaylist.unshuffleSongs();
             status.setShuffle(false);
             obj.put("message", "Shuffle function deactivated successfully.");
         } else {
-            Playlist.shuffleSongs(loadedPlaylist, seed);
+            loadedPlaylist.shuffleSongs(seed);
             status.setShuffle(true);
             obj.put("message", "Shuffle function activated successfully.");
         }
     }
 
     public void next(final User user, final ObjectNode obj, final Integer timestamp) {
-        Song nextSong = Playlist.nextSong(loadedSong, loadedPlaylist);
+        Song nextSong = loadedPlaylist.nextSong(loadedSong);
         assert nextSong != null;
 
         switch (status.getRepeat()) {
             case "No Repeat":
-                if (nextSong.equals(Playlist.firstSong(loadedPlaylist, user))) {
+                if (nextSong.equals(loadedPlaylist.firstSong())) {
                     status.reset();
                     super.loadedSong = null;
                     super.isLoaded = false;
@@ -144,7 +143,7 @@ public final class PlaylistPlayer extends AbstractPlayer {
         if (status.getRemainedTime() < loadedSong.getDuration()) {
             status.setRemainedTime(loadedSong.getDuration());
         } else {
-            Song prev = Playlist.prevSong(loadedSong, loadedPlaylist);
+            Song prev = loadedPlaylist.prevSong(loadedSong);
             status.setRemainedTime(prev.getDuration());
             status.setName(prev.getName());
             super.loadedSong = prev;

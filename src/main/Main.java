@@ -56,8 +56,8 @@ public final class Main {
             if (file.getName().startsWith("library")) {
                 continue;
             }
-            if(++i < 16)
-                continue;
+//            if(++i < 16)
+//                continue;
 
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
@@ -65,7 +65,7 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (i == 16) {
+            if (++i == 15) {
                 break;
             }
         }
@@ -107,10 +107,12 @@ public final class Main {
         AbstractPlayer player = null;
 
         // Initiating status
-        Stats status = Stats.getInstance();
-        status.reset(); // reset status history from previous test
+        Stats status = null;
 
         for(Commands command : commands) {
+            if (status == null) {
+                status = new Stats();
+            }
             // Getting user by username
             User user = User.getUserByName(users, command.getUsername());
 
@@ -123,6 +125,7 @@ public final class Main {
             if (user != null) {
                 search = user.search;
                 player = user.player;
+                status = user.status;
                 objectNode.put("user", command.getUsername());
             }
             objectNode.put("timestamp", command.getTimestamp());

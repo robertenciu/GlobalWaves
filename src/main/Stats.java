@@ -6,9 +6,8 @@ public final class Stats {
     private String repeat;
     private boolean shuffle;
     private boolean paused;
-    private static Stats instance = null;
 
-    private Stats() { }
+    public Stats() { }
 
     public void reset() {
         name = "";
@@ -16,14 +15,6 @@ public final class Stats {
         repeat = "No Repeat";
         shuffle = false;
         paused = true;
-    }
-    public static Stats getInstance() {
-        if (instance == null) {
-            instance = new Stats();
-            instance.setRepeat("No Repeat");
-            instance.setPaused(false);
-        }
-        return instance;
     }
 
     public String getName() {

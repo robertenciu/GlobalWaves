@@ -15,6 +15,15 @@ public final class Playlist {
     private ArrayList<Song> songs;
     private ArrayList<Song> originalOrder;
     private String visibility;
+    public Playlist(Playlist playlist) {
+        this.name = playlist.getName();
+        this.playlistId = playlist.getPlaylistId();
+        this.songs = playlist.getSongs();
+        this.createdBy = playlist.getCreatedBy();
+        this.followers = playlist.getFollowers();
+        this.originalOrder = playlist.getOriginalOrder();
+        this.visibility = playlist.getVisibility();
+    }
     public Playlist(final String name, final int id) {
         this.visibility = "public";
         this.name = name;
@@ -30,16 +39,13 @@ public final class Playlist {
         }
         return false;
     }
-    public static void shuffleSongs(final Playlist playlist, final long seed) {
+    public void shuffleSongs(final long seed) {
         Random random = new Random(seed);
-        if (playlist.getSongs() == null) {
-            return;
-        }
-        playlist.originalOrder = new ArrayList<>(playlist.getSongs());
-        Collections.shuffle(playlist.getSongs(), random);
+        this.originalOrder = new ArrayList<>(this.getSongs());
+        Collections.shuffle(this.getSongs(), random);
     }
-    public static void unshuffleSongs(final Playlist playlist) {
-        playlist.setSongs(playlist.originalOrder);
+    public void unshuffleSongs() {
+        Collections.copy(this.getSongs(), this.originalOrder);
     }
     public static void switchVisibility(final Integer playlistId,
                                         final User user,
@@ -84,25 +90,25 @@ public final class Playlist {
                 return playlist;
         return null;
     }
-    public  Song nextSong(Song song, Playlist playlist) {
-        for (int i = 0; i < playlist.getSongs().size() - 1; i++)
-            if (playlist.getSongs().get(i).getName().equals(song.getName()))
-                return playlist.getSongs().get(i + 1);
-        if (lastSong(playlist).getName().equals(song.getName()))
-            return firstSong(playlist);
+    public Song nextSong(Song song) {
+        for (int i = 0; i < this.getSongs().size() - 1; i++)
+            if (this.getSongs().get(i).getName().equals(song.getName()))
+                return this.getSongs().get(i + 1);
+        if (lastSong().getName().equals(song.getName()))
+            return firstSong();
         return null;
     }
-    public Song prevSong(Song song, Playlist playlist) {
-        for (int i = 1; i < playlist.getSongs().size(); i++)
-            if (playlist.getSongs().get(i).getName().equals(song.getName()))
-                return playlist.getSongs().get(i - 1);
-        return Playlist.firstSong(playlist);
+    public Song prevSong(Song song) {
+        for (int i = 1; i < this.getSongs().size(); i++)
+            if (this.getSongs().get(i).getName().equals(song.getName()))
+                return this.getSongs().get(i - 1);
+        return firstSong();
     }
-    public Song firstSong(Playlist playlist, User user) {
-        return user.getPlaylist(playlist.getName()).getSongs().get(0);
+    public Song firstSong() {
+        return this.getSongs().get(0);
     }
-    public Song lastSong(Playlist playlist) {
-        return playlist.getSongs().get(playlist.getSongs().size() - 1);
+    public Song lastSong() {
+        return this.getSongs().get(this.getSongs().size() - 1);
     }
     public static void showPlaylists(final ObjectNode objectNode, final User user) {
         ArrayNode result = objectNode.putArray("result");
@@ -152,6 +158,14 @@ public final class Playlist {
 
     public Integer getPlaylistId() {
         return this.playlistId;
+    }
+
+    public ArrayList<Song> getOriginalOrder() {
+        return originalOrder;
+    }
+
+    public void setOriginalOrder(ArrayList<Song> originalOrder) {
+        this.originalOrder = originalOrder;
     }
 
     public ArrayList<Song> getSongs() {

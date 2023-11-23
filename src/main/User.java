@@ -24,6 +24,7 @@ public final class User {
     private final ArrayList<Playlist> followedPlaylists;
     public Search search;
     public AbstractPlayer player;
+    public Stats status;
 
     public User(final UserInput user) {
         likedSongs = new ArrayList<>();
