@@ -9,25 +9,33 @@ import main.User;
 public abstract class AbstractPlayer implements PlayerCommands {
     protected boolean isLoaded;
     protected Integer timeUpdated;
-    protected Stats status = Stats.getInstance();
+    protected Stats status;
     protected Song loadedSong;
     protected Podcast loadedPodcast;
     protected Playlist loadedPlaylist;
     protected Episode loadedEpisode;
-    public static AbstractPlayer createPlayer(final Search search) {
+    public static AbstractPlayer createPlayer(final Search search, final Stats status) {
         if (search.getType() == null) {
             return null;
         }
+        AbstractPlayer player = null;
         if (search.getType().equals("song")) {
-            return new SongPlayer(search.getSelectedSong());
+            player = new SongPlayer(search.getSelectedSong());
         }
         if (search.getType().equals("podcast")) {
-            return new PodcastPlayer(search.getSelectedPodcast());
+            player = new PodcastPlayer(search.getSelectedPodcast());
         }
         if (search.getType().equals("playlist")) {
-            return new PlaylistPlayer(search.getSelectedPlaylist());
+            player = new PlaylistPlayer(search.getSelectedPlaylist());
         }
-        return null;
+        if (player != null) {
+            player.setStatus(status);
+        }
+        return player;
+    }
+
+    public void setStatus(Stats status) {
+        this.status = status;
     }
 
     public boolean isLoaded() {

@@ -132,10 +132,15 @@ public final class PlaylistPlayer extends AbstractPlayer {
         }
 
         super.timeUpdated = timestamp;
-
-        obj.put("message",
-                "Skipped to next track successfully. The current track is "
-                        + status.getName() + ".");
+        if (status.getName().isEmpty()) {
+            obj.put("message",
+                    "Please load a source before skipping to the next track.");
+        } else {
+            status.setPaused(false);
+            obj.put("message",
+                    "Skipped to next track successfully. The current track is "
+                            + status.getName() + ".");
+        }
 
     }
 

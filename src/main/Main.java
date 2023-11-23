@@ -65,7 +65,7 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (++i == 15) {
+            if (++i == 16) {
                 break;
             }
         }
@@ -110,9 +110,7 @@ public final class Main {
         Stats status = null;
 
         for(Commands command : commands) {
-            if (status == null) {
-                status = new Stats();
-            }
+
             // Getting user by username
             User user = User.getUserByName(users, command.getUsername());
 
@@ -123,9 +121,12 @@ public final class Main {
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", command.getCommand());
             if (user != null) {
+                if (user.status == null) {
+                    user.status = new Stats();
+                }
+                status = user.status;
                 search = user.search;
                 player = user.player;
-                status = user.status;
                 objectNode.put("user", command.getUsername());
             }
             objectNode.put("timestamp", command.getTimestamp());
@@ -181,7 +182,7 @@ public final class Main {
 
                         // Creating player depending on media type
                         assert user != null;
-                        user.player = AbstractPlayer.createPlayer(search);
+                        user.player = AbstractPlayer.createPlayer(search, status);
                         player = user.player;
                         if (player == null) {
                             System.out.println("Incorrect type");

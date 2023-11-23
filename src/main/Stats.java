@@ -7,7 +7,13 @@ public final class Stats {
     private boolean shuffle;
     private boolean paused;
 
-    public Stats() { }
+    public Stats() {
+        name = "";
+        remainedTime = 0;
+        repeat = "No Repeat";
+        shuffle = false;
+        paused = true;
+    }
 
     public void reset() {
         name = "";
