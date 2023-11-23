@@ -6,6 +6,7 @@ import media.*;
 import java.util.ArrayList;
 
 public abstract class Search {
+    public ArrayNode result;
     protected int resultsCount = 0;
     protected final int maxResultSize = 5;
     protected boolean isSelected;

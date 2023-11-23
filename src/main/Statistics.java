@@ -11,7 +11,7 @@ public final class Statistics {
     private final ArrayList<Playlist> playlists;
     private final int topMaxSize = 5;
 
-    public Statistics(final ArrayList<Song> songs,
+    public Statistics(final ArrayList<Song> songs,  //TO DO MAKE SEPArate constructors
                       final ArrayList<Playlist> playlists) {
         this.songs = songs;
         this.playlists = playlists;

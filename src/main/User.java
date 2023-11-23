@@ -43,12 +43,13 @@ public final class User {
         }
         return users;
     }
+
     /**
-     * This is a sample method that adds two integers.
+     * This is a method that returns a user based on the provided username from a list of users.
      *
-     * @param users The first integer.
-     * @param name The second integer.
-     * @return The sum of the two integers.
+     * @param users The list of users.
+     * @param name The username.
+     * @return The user object matching the given username.
      */
     public static User getUserByName(final ArrayList<User> users, final String name) {
         if (users.isEmpty() || name == null) {

@@ -51,10 +51,10 @@ public final class Playlist {
     public static void switchVisibility(final Integer playlistId,
                                         final User user,
                                         final ObjectNode objectNode) {
-        Playlist playlist = getPlaylistFromId(user, playlistId);
+        Playlist playlist = getPlaylistFromId(user, playlistId); // make get user dependent
         assert playlist != null;
 
-        if (!playlist.getCreatedBy().equals(user.getUsername())) {
+        if (!playlist.getCreatedBy().equals(user.getUsername())) { // remove createdBy
             return;
         }
 
