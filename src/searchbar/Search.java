@@ -11,7 +11,7 @@ import media.Song;
 import java.util.ArrayList;
 
 public abstract class Search {
-    public ArrayNode result;
+    protected ArrayNode result;
     protected int resultsCount = 0;
     protected final int maxResultSize = 5;
     protected boolean isSelected;
@@ -57,9 +57,23 @@ public abstract class Search {
         return search;
     }
 
-    public abstract void select(final String name);
+    /**
+     * This method selects a specific file based on the search.
+     * The method searches for the media name in the specific library(song, podcast),
+     *      and sets the proper attribute to the selected file.
+     *
+     * @param name The name of the chosen file from the search bar.
+     */
+    public abstract void select(String name);
 
-    public abstract ArrayNode getSearchResultArray(final Filters filter, final User user);
+    /**
+     * Method for listing an array of results based on the search filters.
+     *
+     * @param filter The search filter.
+     * @param user The user that makes the search (since each user has individual search result).
+     * @return The array containing the search result (ArrayNode for output purpose).
+     */
+    public abstract ArrayNode getSearchResultArray(Filters filter, User user);
 
     public final int getResultsCount() {
         return resultsCount;
@@ -103,5 +117,13 @@ public abstract class Search {
 
     public final Podcast getSelectedPodcast() {
         return selectedPodcast;
+    }
+
+    public final ArrayNode getResult() {
+        return result;
+    }
+
+    public final void setResult(final ArrayNode result) {
+        this.result = result;
     }
 }

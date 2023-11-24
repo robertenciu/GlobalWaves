@@ -49,7 +49,7 @@ public final class InputProccesor {
      */
     public void search() {
         if (player != null && player.isLoaded()) {
-            player.updateStatus(command.getTimestamp(), user);
+            player.updateStatus(command.getTimestamp());
             player.setLoaded(false);
         }
 
@@ -62,29 +62,29 @@ public final class InputProccesor {
         search = user.getSearch();
 
         // Updating search result array
-        search.result = search.getSearchResultArray(command.getFilters(), user);
+        search.setResult(search.getSearchResultArray(command.getFilters(), user));
 
         // Output for search
         objectNode.put("message", "Search returned " + search.getResultsCount() + " results");
-        objectNode.put("results", search.result);
+        objectNode.put("results", search.getResult());
     }
 
     /**
      * Handle select command.
      */
     public void select() {
-        if (search == null || search.result == null) {
+        if (search == null || search.getResult() == null) {
             objectNode.put("message", "Please conduct a search before making a selection.");
             return;
         }
         if (command.getItemNumber() <= search.getResultsCount()) {
-            String selected = search.result.get(command.getItemNumber() - 1).textValue();
+            String selected = search.getResult().get(command.getItemNumber() - 1).textValue();
             search.select(selected);
             objectNode.put("message", "Successfully selected " + selected + ".");
         } else {
             objectNode.put("message", "The selected ID is too high.");
         }
-        search.result = null;
+        search.setResult(null);
     }
 
     /**
@@ -100,12 +100,12 @@ public final class InputProccesor {
 
             // Creating player depending on media type
             assert user != null;
-            user.setPlayer(Player.createPlayer(search, status));
+            user.setPlayer(Player.createPlayer(search, status, user));
             player = user.getPlayer();
 
             // Loading media
             assert player != null;
-            player.load(command.getTimestamp(), user);
+            player.load(command.getTimestamp());
 
             objectNode.put("message",
                     "Playback loaded successfully.");
@@ -132,7 +132,7 @@ public final class InputProccesor {
         }
 
         // Pausing or resuming media
-        player.playPause(command.getTimestamp(), user);
+        player.playPause(command.getTimestamp());
     }
 
     /**
@@ -146,7 +146,7 @@ public final class InputProccesor {
         }
 
         // Updating status
-        player.updateStatus(command.getTimestamp(), user);
+        player.updateStatus(command.getTimestamp());
 
         if (player.isLoaded()) {
             player.repeat();
@@ -168,7 +168,7 @@ public final class InputProccesor {
         }
 
         // Updating status
-        player.updateStatus(command.getTimestamp(), user);
+        player.updateStatus(command.getTimestamp());
 
         if (player.isLoaded()) {
             player.shuffle(objectNode, command.getSeed());
@@ -187,10 +187,10 @@ public final class InputProccesor {
         }
 
         // Updating status
-        player.updateStatus(command.getTimestamp(), user);
+        player.updateStatus(command.getTimestamp());
 
         if (player.isLoaded()) {
-            player.forward(user, objectNode);
+            player.forward(objectNode);
         } else {
             objectNode.put("message", "Please load a source before attempting to forward.");
         }
@@ -206,10 +206,10 @@ public final class InputProccesor {
         }
 
         // Updating status
-        player.updateStatus(command.getTimestamp(), user);
+        player.updateStatus(command.getTimestamp());
 
         if (player.isLoaded()) {
-            player.backward(user, objectNode);
+            player.backward(objectNode);
         } else {
             objectNode.put("message", "Please select a source before rewinding.");
         }
@@ -225,10 +225,10 @@ public final class InputProccesor {
         }
 
         // Updating status
-        player.updateStatus(command.getTimestamp(), user);
+        player.updateStatus(command.getTimestamp());
 
         if (player.isLoaded()) {
-            player.next(user, objectNode, command.getTimestamp());
+            player.next(objectNode, command.getTimestamp());
         } else {
             objectNode.put("message", "Please load a source before skipping to the next track.");
         }
@@ -245,10 +245,10 @@ public final class InputProccesor {
         }
 
         // Updating status
-        player.updateStatus(command.getTimestamp(), user);
+        player.updateStatus(command.getTimestamp());
 
         if (player.isLoaded()) {
-            player.prev(user, objectNode, command.getTimestamp());
+            player.prev(objectNode, command.getTimestamp());
         } else {
             objectNode.put("message",
                     "Please load a source before returning to the previous track.");
@@ -260,7 +260,7 @@ public final class InputProccesor {
      */
     public void status() {
         if (player != null && player.isLoaded()) {
-            player.updateStatus(command.getTimestamp(), user);
+            player.updateStatus(command.getTimestamp());
         }
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode statsNode = objectMapper.valueToTree(status);
@@ -272,8 +272,8 @@ public final class InputProccesor {
      */
     public void like() {
         if (player != null && player.isLoaded()) {
-            player.updateStatus(command.getTimestamp(), user);
-            player.like(user, objectNode);
+            player.updateStatus(command.getTimestamp());
+            player.like(objectNode);
         } else {
             objectNode.put("message", "Please load a source before liking or unliking.");
         }
@@ -284,7 +284,7 @@ public final class InputProccesor {
      */
     public void addRemoveInPlaylist() {
         if (player != null && player.isLoaded()) {
-            player.addRemoveInPlaylist(user, command.getPlaylistId(), objectNode);
+            player.addRemoveInPlaylist(command.getPlaylistId(), objectNode);
         } else {
             objectNode.put("message",
                     "Please load a source before adding to or removing from the playlist.");

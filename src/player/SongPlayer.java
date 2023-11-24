@@ -3,18 +3,16 @@ package player;
 import media.Playlist;
 import media.Song;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.User;
 
 public final class SongPlayer extends Player {
+    private Song loadedSong;
     public SongPlayer() { }
     public SongPlayer(final Song song) {
-        super.loadedSong = song;
+        this.loadedSong = song;
     }
 
     @Override
-    public void addRemoveInPlaylist(final User user,
-                                    final Integer playlistId,
-                                    final ObjectNode obj) {
+    public void addRemoveInPlaylist(final Integer playlistId, final ObjectNode obj) {
         Playlist playlist = user.getPlaylist(playlistId);
         if (playlist == null) {
             obj.put("message", "The specified playlist does not exist.");
@@ -31,7 +29,8 @@ public final class SongPlayer extends Player {
         }
     }
 
-    public void like(final User user, final ObjectNode obj) {
+    @Override
+    public void like(final ObjectNode obj) {
         if (user.getLikedSongs().contains(loadedSong)) {
             obj.put("message", "Unlike registered successfully.");
             user.getLikedSongs().remove(loadedSong);
@@ -44,7 +43,7 @@ public final class SongPlayer extends Player {
     }
 
     @Override
-    public void load(final Integer timestamp, final User user) {
+    public void load(final Integer timestamp) {
         status.setRemainedTime(loadedSong.getDuration());
         status.setName(loadedSong.getName());
         status.setPaused(false);
@@ -54,12 +53,12 @@ public final class SongPlayer extends Player {
 
     private void handleNoRepeat() {
         status.reset();
-        super.loadedSong = null;
+        loadedSong = null;
         super.isLoaded = false;
     }
 
     @Override
-    public void updateStatus(final Integer timestamp, final User user) {
+    public void updateStatus(final Integer timestamp) {
         if (status.isPaused()) {
             return;
         }

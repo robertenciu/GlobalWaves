@@ -13,6 +13,7 @@ public final class SearchPodcast extends Search {
     public SearchPodcast() {
     }
 
+    @Override
     public void select(final String name) {
         for (Podcast podcast : super.podcasts) {
             if (name.equals(podcast.getName())) {
@@ -24,6 +25,7 @@ public final class SearchPodcast extends Search {
         super.isSelected = true;
     }
 
+    @Override
     public ArrayNode getSearchResultArray(final Filters filter, final User user) {
         ArrayList<Podcast> result = new ArrayList<>(super.podcasts);
 

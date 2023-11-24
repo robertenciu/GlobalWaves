@@ -15,7 +15,7 @@ public final class Playlist {
     private ArrayList<Song> songs;
     private ArrayList<Song> originalOrder;
     private String visibility;
-    public Playlist(final String name, final int id, String owner) {
+    public Playlist(final String name, final int id, final String owner) {
         this.visibility = "public";
         this.name = name;
         this.songs = new ArrayList<>();

@@ -12,6 +12,7 @@ public final class SearchPlaylist extends Search {
     public SearchPlaylist() {
     }
 
+    @Override
     public void select(final String name) {
         for (Playlist playlist : super.playlists) {
             if (name.equals(playlist.getName())) {

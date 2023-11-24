@@ -1,19 +1,20 @@
 package player;
 
-import media.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.User;
+import media.Playlist;
+import media.Song;
 
 public final class PlaylistPlayer extends Player {
+    private final Playlist loadedPlaylist;
+    private Song loadedSong;
     private boolean reachedPlaylistEnd;
     public PlaylistPlayer(final Playlist playlist) {
-        super.loadedPlaylist = playlist;
+        this.loadedPlaylist = playlist;
     }
-    super.user
 
     @Override
-    public void load(final Integer timestamp, final User user) {
-        super.loadedSong = loadedPlaylist.firstSong();
+    public void load(final Integer timestamp) {
+        loadedSong = loadedPlaylist.firstSong();
         super.isLoaded = true;
 
         status.setRemainedTime(loadedSong.getDuration());
@@ -24,8 +25,10 @@ public final class PlaylistPlayer extends Player {
     }
 
     @Override
-    public void like(final User user, final ObjectNode obj) {
-        new SongPlayer(loadedSong).like(user, obj);
+    public void like(final ObjectNode obj) {
+        SongPlayer temp = new SongPlayer(loadedSong);
+        temp.setUser(user);
+        temp.like(obj);
     }
     private void getCurrentSong(final int timeElapsed) {
         int timeRemaining = timeElapsed;
@@ -34,8 +37,9 @@ public final class PlaylistPlayer extends Player {
             timeRemaining = timeRemaining - status.getRemainedTime();
             nextSong = loadedPlaylist.nextSong(loadedSong);
 
-            if (nextSong.equals(loadedPlaylist.firstSong()) &&
-                                                    status.getRepeat().equals("No Repeat")) {
+            assert nextSong != null;
+            if (nextSong.equals(loadedPlaylist.firstSong())
+                    && status.getRepeat().equals("No Repeat")) {
                 handleNoRepeat();
                 return;
             }
@@ -50,12 +54,12 @@ public final class PlaylistPlayer extends Player {
 
     private void handleNoRepeat() {
         status.reset();
-        super.loadedSong = null;
+        loadedSong = null;
         super.isLoaded = false;
     }
 
     @Override
-    public void updateStatus(final Integer timestamp, final User user) {
+    public void updateStatus(final Integer timestamp) {
         if (status.isPaused() || loadedSong == null) {
             return;
         }
@@ -107,6 +111,7 @@ public final class PlaylistPlayer extends Player {
         }
     }
 
+    @Override
     public void shuffle(final ObjectNode obj, final long seed) {
         if (status.isShuffle()) {
             loadedPlaylist.unshuffleSongs();
@@ -119,31 +124,21 @@ public final class PlaylistPlayer extends Player {
         }
     }
 
-    public void next(final User user, final ObjectNode obj, final Integer timestamp) {
+    @Override
+    public void next(final ObjectNode obj, final Integer timestamp) {
         Song nextSong = loadedPlaylist.nextSong(loadedSong);
-        Song firstSong = loadedPlaylist.firstSong();
         assert nextSong != null;
-
-//        if (status.getRepeat().equals("No Repeat") && nextSong.equals(firstSong)) {
-//            status.reset();
-//            super.loadedSong = null;
-//            super.isLoaded = false;
-//        } else {
-//            super.loadedSong = nextSong;
-//            status.setRemainedTime(loadedSong.getDuration());
-//            status.setName(loadedSong.getName());
-//        }
 
         switch (status.getRepeat()) {
             case "No Repeat":
                 if (nextSong.equals(loadedPlaylist.firstSong())) {
                     status.reset();
-                    super.loadedSong = null;
+                    loadedSong = null;
                     super.isLoaded = false;
                     break;
                 }
             case "Repeat All":
-                super.loadedSong = nextSong;
+                loadedSong = nextSong;
             case "Repeat Current Song":
                 status.setRemainedTime(loadedSong.getDuration());
                 status.setName(loadedSong.getName());
@@ -164,11 +159,13 @@ public final class PlaylistPlayer extends Player {
 
     }
 
-    public void prev(final User user, final ObjectNode obj, final Integer timestamp) {
+    @Override
+    public void prev(final ObjectNode obj, final Integer timestamp) {
         if (status.getRemainedTime() < loadedSong.getDuration()) {
             status.setRemainedTime(loadedSong.getDuration());
         } else {
             Song prev = loadedPlaylist.prevSong(loadedSong);
+
             if (!status.getRepeat().equals("Repeat All") && prev == loadedPlaylist.lastSong()) {
                 prev = loadedPlaylist.firstSong();
             } else if (prev == loadedPlaylist.lastSong()) {
@@ -179,7 +176,7 @@ public final class PlaylistPlayer extends Player {
 
             status.setRemainedTime(prev.getDuration());
             status.setName(prev.getName());
-            super.loadedSong = prev;
+            loadedSong = prev;
         }
         super.timeUpdated = timestamp;
         status.setPaused(false);

@@ -3,23 +3,13 @@ package player;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import main.Stats;
 import main.User;
-import media.Episode;
-import media.Playlist;
-import media.Podcast;
-import media.Song;
 import searchbar.Search;
 
 public abstract class Player implements PlayerCommands {
     protected boolean isLoaded;
     protected Integer timeUpdated;
     protected Stats status;
-    //make user here
     protected User user;
-    // make this into each class
-    protected Song loadedSong;
-    protected Podcast loadedPodcast;
-    protected Playlist loadedPlaylist;
-    protected Episode loadedEpisode;
 
     /**
      * Creates a specific player(song, playlist, podcast) based on the search type.
@@ -45,6 +35,7 @@ public abstract class Player implements PlayerCommands {
         }
         if (player != null) {
             player.setStatus(status);
+            player.setUser(user);
         }
         return player;
     }
@@ -54,12 +45,11 @@ public abstract class Player implements PlayerCommands {
      * Default method for all media types.
      *
      * @param timestamp The current timestamp
-     * @param user The current user.
      */
     @Override
-    public final void playPause(final Integer timestamp, final User user) {
+    public final void playPause(final Integer timestamp) {
         if (!status.isPaused()) {
-            updateStatus(timestamp, user);
+            updateStatus(timestamp);
             status.setPaused(true);
         } else {
             status.setPaused(false);
@@ -68,45 +58,78 @@ public abstract class Player implements PlayerCommands {
     }
 
     /**
-     * This method sets the player to the next song.
+     * This method sets the player to the next file(song, episode).
      *
-     * @param user The current user.
      * @param obj The objectNode for output message.
      * @param timestamp The current timestamp of the command.
      */
-    public void next(final User user, final ObjectNode obj, final Integer timestamp) {
+    public void next(final ObjectNode obj, final Integer timestamp) {
     }
 
-    public void prev(final User user, final ObjectNode obj, final Integer timestamp) {
+    /**
+     * This method sets the player to the previous file(song, episode).
+     * If the file already started it goes back to the beginning of the file.
+     *
+     * @param obj The objectNode for output message.
+     * @param timestamp The current timestamp of the command.
+     */
+    public void prev(final ObjectNode obj, final Integer timestamp) {
     }
+
+    /**
+     * Method for shuffling feature.
+     *
+     * @param obj The objectNode for output message.
+     * @param seed The seed for the random object.
+     */
     public void shuffle(final ObjectNode obj, final long seed) {
         // Default
         obj.put("message", "The loaded source is not a playlist.");
     }
 
-    public void like(final User user, final ObjectNode obj) {
+    /**
+     * Method for liking a loaded song.
+     *
+     * @param obj The objectNode for specific output message.
+     */
+    public void like(final ObjectNode obj) {
         // Default
         obj.put("message", "Loaded source is not a song.");
     }
 
-    public void forward(final User user, final ObjectNode obj) {
+    /**
+     * Method for forwarding a podcast (skipping an amount from the loaded episode).
+     *
+     * @param obj The objectNode for the output message.
+     */
+    public void forward(final ObjectNode obj) {
         // Default
         obj.put("message", "The loaded source is not a podcast.");
     }
 
-    public void backward(final User user, final ObjectNode obj) {
+    /**
+     * This method sets the player to go back an amount of seconds from the playing episode.
+     * If the amount is bigger than the elapsed time, it goes back to the beginning of the episode.
+     *
+     * @param obj The objectNode for the output message.
+     */
+    public void backward(final ObjectNode obj) {
         // Default
         obj.put("message", "The loaded source is not a podcast.");
     }
 
-    public void addRemoveInPlaylist(final User user,
-                                    final Integer playlistId,
-                                    final ObjectNode obj) {
+    /**
+     * This method adds playing song to a specific playlist given by an id.
+     *
+     * @param playlistId The playlist id.
+     * @param obj The objectNode which contains a specific output message.
+     */
+    public void addRemoveInPlaylist(final Integer playlistId, final ObjectNode obj) {
         // Default
         obj.put("message", "The loaded source is not a song.");
     }
 
-    public final void setStatus(Stats status) {
+    public final void setStatus(final Stats status) {
         this.status = status;
     }
 
@@ -118,7 +141,7 @@ public abstract class Player implements PlayerCommands {
         isLoaded = loaded;
     }
 
-    public void setUser(User user) {
+    public final void setUser(final User user) {
         this.user = user;
     }
 
