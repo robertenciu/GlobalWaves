@@ -5,7 +5,7 @@ import media.Song;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import main.User;
 
-public final class SongPlayer extends AbstractPlayer {
+public final class SongPlayer extends Player {
     public SongPlayer() { }
     public SongPlayer(final Song song) {
         super.loadedSong = song;
@@ -15,7 +15,7 @@ public final class SongPlayer extends AbstractPlayer {
     public void addRemoveInPlaylist(final User user,
                                     final Integer playlistId,
                                     final ObjectNode obj) {
-        Playlist playlist = Playlist.getPlaylistFromId(user, playlistId);
+        Playlist playlist = user.getPlaylist(playlistId);
         if (playlist == null) {
             obj.put("message", "The specified playlist does not exist.");
             return;

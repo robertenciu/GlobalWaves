@@ -84,17 +84,18 @@ public final class SearchSong extends Search {
                                         final ArrayList<String> tags) {
         ArrayList<Song> byTags = new ArrayList<>();
         for (Song song : songs) {
-            if (song.getTags().containsAll(tags))
+            if (song.getTags().containsAll(tags)) {
                 byTags.add(song);
+            }
         }
         return byTags;
     }
 
     private ArrayList<Song> byLyrics(final ArrayList<Song> songs,
-                                          final String Lyrics) {
+                                          final String lyrics) {
         ArrayList<Song> byLyrics = new ArrayList<>();
         for (Song song : songs) {
-            if (song.getLyrics().toLowerCase().contains(Lyrics.toLowerCase())) {
+            if (song.getLyrics().toLowerCase().contains(lyrics.toLowerCase())) {
                 byLyrics.add(song);
             }
         }
@@ -120,7 +121,7 @@ public final class SearchSong extends Search {
                 if (song.getReleaseYear() < Integer.parseInt(releaseYear.substring(1))) {
                     byReleaseyear.add(song);
                 }
-            } else if (releaseYear.charAt(0) == '>'){
+            } else if (releaseYear.charAt(0) == '>') {
                 if (song.getReleaseYear() > Integer.parseInt(releaseYear.substring(1))) {
                     byReleaseyear.add(song);
                 }

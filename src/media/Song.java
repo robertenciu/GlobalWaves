@@ -27,6 +27,13 @@ public final class Song {
         this.artist = song.getArtist();
     }
 
+    /**
+     * This is a method that returns a copy of the input songs
+     * in order to perform additional processing.
+     *
+     * @param library The input library.
+     * @return A new ArrayList containing copies of the original songs.
+     */
     public static ArrayList<Song> copySongs(final LibraryInput library) {
         ArrayList<Song> songs = new ArrayList<>();
         for (SongInput songInput : library.getSongs()) {

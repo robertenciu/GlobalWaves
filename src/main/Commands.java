@@ -16,6 +16,10 @@ public final class Commands {
         return seed;
     }
 
+    public void setSeed(final long seed) {
+        this.seed = seed;
+    }
+
     public String getCommand() {
         return command;
     }

@@ -1,8 +1,13 @@
 package searchbar;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import main.*;
-import media.*;
+import main.Filters;
+import main.User;
+import media.Library;
+import media.Playlist;
+import media.Podcast;
+import media.Song;
+
 import java.util.ArrayList;
 
 public abstract class Search {
@@ -17,15 +22,20 @@ public abstract class Search {
     protected ArrayList<Podcast> podcasts;
     protected ArrayList<Playlist> playlists;
     private String type;
-    public static Search newSearch(final String type,
-                                   final ArrayList<Song> songs,
-                                   final ArrayList<Podcast> podcasts,
-                                   final ArrayList<Playlist> playlists) {
+
+    /**
+     * Creates a specific search(song, playlist, podcast) based on the search type.
+     *
+     * @param type The search type(song, playlist,etc.)
+     * @param library The reference of the library.
+     * @return The new created player.
+     */
+    public static Search newSearch(final String type, final Library library) {
         if (type == null) {
             return null;
         }
         Search search = null;
-        switch(type) {
+        switch (type) {
             case "song":
                 search = new SearchSong();
                 break;
@@ -40,9 +50,9 @@ public abstract class Search {
         }
         if (search != null) {
             search.setType(type);
-            search.setPodcasts(podcasts);
-            search.setPlaylists(playlists);
-            search.setSongs(songs);
+            search.setPodcasts(library.getPodcasts());
+            search.setPlaylists(library.getPlaylists());
+            search.setSongs(library.getSongs());
         }
         return search;
     }
@@ -51,47 +61,47 @@ public abstract class Search {
 
     public abstract ArrayNode getSearchResultArray(final Filters filter, final User user);
 
-    public int getResultsCount() {
+    public final int getResultsCount() {
         return resultsCount;
     }
 
-    public boolean isSelected() {
+    public final boolean isSelected() {
         return isSelected;
     }
 
-    public void setSelected(boolean selected) {
+    public final void setSelected(final boolean selected) {
         isSelected = selected;
     }
 
-    public void setType(String type) {
+    public final void setType(final String type) {
         this.type = type;
     }
 
-    public String getType() {
+    public final String getType() {
         return type;
     }
 
-    public void setSongs(ArrayList<Song> songs) {
+    public final void setSongs(final ArrayList<Song> songs) {
         this.songs = songs;
     }
 
-    public void setPodcasts(ArrayList<Podcast> podcasts) {
+    public final void setPodcasts(final ArrayList<Podcast> podcasts) {
         this.podcasts = podcasts;
     }
 
-    public void setPlaylists(ArrayList<Playlist> playlists) {
+    public final void setPlaylists(final ArrayList<Playlist> playlists) {
         this.playlists = playlists;
     }
 
-    public Playlist getSelectedPlaylist() {
+    public final Playlist getSelectedPlaylist() {
         return selectedPlaylist;
     }
 
-    public Song getSelectedSong() {
+    public final Song getSelectedSong() {
         return selectedSong;
     }
 
-    public Podcast getSelectedPodcast() {
+    public final Podcast getSelectedPodcast() {
         return selectedPodcast;
     }
 }

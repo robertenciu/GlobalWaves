@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.LibraryInput;
-import media.Song;
-import media.Playlist;
-import media.Podcast;
+import media.Library;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.ArrayList;
 
 /**
  * The entry point to this homework. It runs the checker that tests your implentation.
@@ -76,32 +73,27 @@ public final class Main {
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Reading library
-        LibraryInput library = objectMapper.readValue(new File(LIBRARY_PATH), LibraryInput.class);
+        LibraryInput libraryInput = objectMapper.readValue(new File(LIBRARY_PATH),
+                                                                    LibraryInput.class);
 
         // Reading commands
         Commands[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
                                                         + filePath1), Commands[].class);
 
-        // Output array
+        // Setting output array
         ArrayNode outputs = objectMapper.createArrayNode();
 
-        // Media and User copy array creation
-        ArrayList<Playlist> playlists = new ArrayList<>();
-        ArrayList<Song> songs = Song.copySongs(library);
-        ArrayList<Podcast> podcasts = Podcast.copyPodcasts(library);
-        ArrayList<User> users = User.copyUsers(library);
+        // Media and User copy array creation into library (ready to be processed)
+        Library library = new Library(libraryInput);
 
 
-        for(Commands command : commands) {
-            User user = User.getUserByName(users, command.getUsername());
+        for (Commands command : commands) {
+            // Getting current user
+            User user = User.getUserByName(library.getUsers(), command.getUsername());
 
-            // Setting output json node (standard output for all commands)
+            // Setting output json objectNode for each command
             ObjectNode objectNode = objectMapper.createObjectNode();
-            InputProccesor inputProccesor = new InputProccesor(user, objectNode, command);
-
-            inputProccesor.setPlaylists(playlists);
-            inputProccesor.setPodcasts(podcasts);
-            inputProccesor.setSongs(songs);
+            InputProccesor inputProccesor = new InputProccesor(library, user, objectNode, command);
 
             switch (command.getCommand()) {
                 case "search":
@@ -167,6 +159,8 @@ public final class Main {
                 default:
                     break;
             }
+
+            // Adding current command output to the outputs array
             outputs.add(objectNode);
         }
 

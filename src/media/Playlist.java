@@ -1,37 +1,36 @@
 package media;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.*;
+import main.User;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
 public final class Playlist {
     private String name;
-    private String createdBy;
+    private final String owner;
     private int followers;
     private final Integer playlistId;
     private ArrayList<Song> songs;
     private ArrayList<Song> originalOrder;
     private String visibility;
-    public Playlist(Playlist playlist) {
-        this.name = playlist.getName();
-        this.playlistId = playlist.getPlaylistId();
-        this.songs = playlist.getSongs();
-        this.createdBy = playlist.getCreatedBy();
-        this.followers = playlist.getFollowers();
-        this.originalOrder = playlist.getOriginalOrder();
-        this.visibility = playlist.getVisibility();
-    }
-    public Playlist(final String name, final int id) {
+    public Playlist(final String name, final int id, String owner) {
         this.visibility = "public";
         this.name = name;
         this.songs = new ArrayList<>();
         this.originalOrder = new ArrayList<>();
         this.playlistId = id;
+        this.owner = owner;
     }
 
+    /**
+     * This method checks if the playlist exists in the global array of the playlists.
+     *
+     * @param name The playlist name.
+     * @param playlists The global playlist array.
+     * @return Returns true if it exists, false otherwise.
+     */
     public static boolean exists(final String name, final ArrayList<Playlist> playlists) {
         for (Playlist playlist : playlists) {
             if (playlist.getName().equals(name)) {
@@ -40,33 +39,38 @@ public final class Playlist {
         }
         return false;
     }
+
+    /**
+     * Shuffling the playlist's songs based on a seed.
+     * Retaining a copy of the original order in order to reverse.
+     *
+     * @param seed The seed.
+     */
     public void shuffleSongs(final long seed) {
         Random random = new Random(seed);
         this.originalOrder = new ArrayList<>(this.getSongs());
         Collections.shuffle(this.getSongs(), random);
     }
+
+    /**
+     * Restoring the playlist's songs to the original order.
+     */
     public void unshuffleSongs() {
         Collections.copy(this.getSongs(), this.originalOrder);
     }
-    public static void switchVisibility(final Integer playlistId,
-                                        final User user,
-                                        final ObjectNode objectNode) {
-        Playlist playlist = getPlaylistFromId(user, playlistId); // make get user dependent
-        assert playlist != null;
 
-        if (!playlist.getCreatedBy().equals(user.getUsername())) { // remove createdBy
-            return;
-        }
-
-        if (playlist.getVisibility().equals("public")) {
-            playlist.setVisibility("private");
-            objectNode.put("message", "Visibility status updated successfully to private.");
-        } else {
-            playlist.setVisibility("public");
-            objectNode.put("message", "Visibility status updated successfully to public.");
-        }
-    }
-    public static void follow(final User user, Playlist playlist, ObjectNode objectNode) {
+    /**
+     * Method that adds a playlist to the list of followed playlists of the user.
+     * Increases the followers count of the playlist.
+     * Adds a specific message to the objectNode in order to show as output.
+     *
+     * @param user The current user.
+     * @param playlist The followed playlist.
+     * @param objectNode The objectNode that holds the specific messages.
+     */
+    public static void follow(final User user,
+                              final Playlist playlist,
+                              final ObjectNode objectNode) {
         if (user.getPlaylists().contains(playlist)) {
             objectNode.put("message", "You cannot follow or unfollow your own playlist.");
             return;
@@ -84,47 +88,59 @@ public final class Playlist {
             objectNode.put("message", "Playlist followed successfully.");
         }
     }
-    public static Playlist getPlaylistFromId(final User user, final Integer playlistId) {
-        ArrayList<Playlist> playlists = user.getPlaylists();
-        for(Playlist playlist : playlists)
-            if(playlist.getPlaylistId().equals(playlistId))
-                return playlist;
-        return null;
-    }
-    public Song nextSong(Song song) {
-        for (int i = 0; i < this.getSongs().size() - 1; i++)
-            if (this.getSongs().get(i).getName().equals(song.getName()))
+
+    /**
+     * This method returns the next song in the playlist.
+     *
+     * @param song The current song playing.
+     * @return The next song.
+     */
+    public Song nextSong(final Song song) {
+        for (int i = 0; i < this.getSongs().size() - 1; i++) {
+            if (this.getSongs().get(i).getName().equals(song.getName())) {
                 return this.getSongs().get(i + 1);
-        if (lastSong().getName().equals(song.getName()))
+            }
+        }
+        if (lastSong().getName().equals(song.getName())) {
             return firstSong();
+        }
         return null;
     }
-    public Song prevSong(Song song) {
-        for (int i = 1; i < this.getSongs().size(); i++)
-            if (this.getSongs().get(i).getName().equals(song.getName()))
+
+    /**
+     * This method returns the previous song in the playlist.
+     * Returns the last song if the current song is the first song.
+     *
+     * @param song The current song.
+     * @return The previous song.
+     */
+    public Song prevSong(final Song song) {
+        for (int i = 1; i < this.getSongs().size(); i++) {
+            if (this.getSongs().get(i).getName().equals(song.getName())) {
                 return this.getSongs().get(i - 1);
+            }
+        }
         return lastSong();
     }
+
+    /**
+     * This method returns the first song of the playlist.
+     *
+     * @return The first song.
+     */
     public Song firstSong() {
         return this.getSongs().get(0);
     }
+
+    /**
+     * This method returns the last song of the playlist.
+     *
+     * @return The last song.
+     */
     public Song lastSong() {
         return this.getSongs().get(this.getSongs().size() - 1);
     }
-    public static void showPlaylists(final ObjectNode objectNode, final User user) {
-        ArrayNode result = objectNode.putArray("result");
 
-        for (Playlist playlist : user.getPlaylists()) {
-            ObjectNode playlistObject = result.addObject();
-            playlistObject.put("name", playlist.getName());
-            ArrayNode songsArray = playlistObject.putArray("songs");
-            for (Song song : playlist.getOriginalOrder()) {
-                songsArray.add(song.getName());
-            }
-            playlistObject.put("visibility", playlist.getVisibility());
-            playlistObject.put("followers", playlist.getFollowers());
-        }
-    }
     public String getVisibility() {
         return visibility;
     }
@@ -145,14 +161,6 @@ public final class Playlist {
         return this.name;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(final String createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public void setName(final String name) {
         this.name = name;
     }
@@ -165,10 +173,6 @@ public final class Playlist {
         return originalOrder;
     }
 
-    public void setOriginalOrder(ArrayList<Song> originalOrder) {
-        this.originalOrder = originalOrder;
-    }
-
     public ArrayList<Song> getSongs() {
         return this.songs;
     }
@@ -176,4 +180,9 @@ public final class Playlist {
     public void setSongs(final ArrayList<Song> songs) {
         this.songs = songs;
     }
+
+    public String getOwner() {
+        return owner;
+    }
+
 }

@@ -5,7 +5,7 @@ import media.Podcast;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import main.User;
 
-public final class PodcastPlayer extends AbstractPlayer {
+public final class PodcastPlayer extends Player {
     public PodcastPlayer(final Podcast podcast) {
         super.loadedPodcast = podcast;
     }
@@ -41,11 +41,12 @@ public final class PodcastPlayer extends AbstractPlayer {
     }
 
     public void forward(final User user, final ObjectNode obj) {
-        if (loadedEpisode.getDuration() >= 90) {
-            loadedEpisode.setDuration(loadedEpisode.getDuration() - 90);
-            status.setRemainedTime(status.getRemainedTime() - 90);
+        final int amount = 90;
+        if (loadedEpisode.getDuration() >= amount) {
+            loadedEpisode.setDuration(loadedEpisode.getDuration() - amount);
+            status.setRemainedTime(status.getRemainedTime() - amount);
         } else {
-            loadedEpisode.setDuration(0);
+            loadedEpisode.setDuration(loadedEpisode.getInitialDuration());
             Episode nextEpisode = nextEpisode(user);
             loadedEpisode = nextEpisode;
             status.setRemainedTime(nextEpisode.getDuration());
@@ -55,9 +56,10 @@ public final class PodcastPlayer extends AbstractPlayer {
     }
 
     public void backward(final User user, final ObjectNode obj) {
-        if (loadedEpisode.getDuration() + 90 <= loadedEpisode.getInitialDuration()) {
-            loadedEpisode.setDuration(loadedEpisode.getDuration() + 90);
-            status.setRemainedTime(status.getRemainedTime() + 90);
+        final int amount = 90;
+        if (loadedEpisode.getDuration() + amount <= loadedEpisode.getInitialDuration()) {
+            loadedEpisode.setDuration(loadedEpisode.getDuration() + amount);
+            status.setRemainedTime(status.getRemainedTime() + amount);
         } else {
             status.setRemainedTime(loadedEpisode.getInitialDuration());
             loadedEpisode.setDuration(loadedEpisode.getInitialDuration());
@@ -65,7 +67,7 @@ public final class PodcastPlayer extends AbstractPlayer {
         obj.put("message", "Rewound successfully.");
     }
 
-    private void getCurrentEpisode(Integer timeElapsed, final User user) {
+    private void getCurrentEpisode(final Integer timeElapsed, final User user) {
         int timeRemaining = timeElapsed;
         Episode nextEpisode;
         do {
@@ -161,7 +163,7 @@ public final class PodcastPlayer extends AbstractPlayer {
         }
 
         super.timeUpdated = timestamp;
-        obj.put("message", "Skipped to next track successfully. The current track is " +
-                status.getName() + ".");
+        obj.put("message", "Skipped to next track successfully. The current track is "
+                + status.getName() + ".");
     }
 }

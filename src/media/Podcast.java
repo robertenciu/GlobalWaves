@@ -20,6 +20,14 @@ public final class Podcast {
             this.episodes.add(episode);
         }
     }
+
+    /**
+     * This is a method that returns a copy of the input podcasts,
+     * in order to perform additional processing.
+     *
+     * @param library The input library.
+     * @return A new ArrayList containing copies of the original podcasts.
+     */
     public static ArrayList<Podcast> copyPodcasts(final LibraryInput library) {
         ArrayList<Podcast> podcasts = new ArrayList<>();
         for (PodcastInput podcastInput : library.getPodcasts()) {

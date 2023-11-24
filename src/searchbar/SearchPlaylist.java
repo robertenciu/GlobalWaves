@@ -49,8 +49,9 @@ public final class SearchPlaylist extends Search {
                                         final String name) {
         ArrayList<Playlist> byOwner = new ArrayList<>();
         for (Playlist playlist : playlists) {
-            if (playlist.getCreatedBy().equals(name))
+            if (playlist.getOwner().equals(name)) {
                 byOwner.add(playlist);
+            }
         }
         return byOwner;
     }
@@ -59,8 +60,9 @@ public final class SearchPlaylist extends Search {
                                        final String name) {
         ArrayList<Playlist> byName = new ArrayList<>();
         for (Playlist playlist : playlists) {
-            if (playlist.getName().startsWith(name))
+            if (playlist.getName().startsWith(name)) {
                 byName.add(playlist);
+            }
         }
         return byName;
     }

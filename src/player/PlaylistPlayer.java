@@ -4,11 +4,12 @@ import media.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import main.User;
 
-public final class PlaylistPlayer extends AbstractPlayer {
+public final class PlaylistPlayer extends Player {
     private boolean reachedPlaylistEnd;
     public PlaylistPlayer(final Playlist playlist) {
         super.loadedPlaylist = playlist;
     }
+    super.user
 
     @Override
     public void load(final Integer timestamp, final User user) {
@@ -183,7 +184,7 @@ public final class PlaylistPlayer extends AbstractPlayer {
         super.timeUpdated = timestamp;
         status.setPaused(false);
         obj.put("message",
-                "Returned to previous track successfully. The current track is " +
-                        status.getName() + ".");
+                "Returned to previous track successfully. The current track is "
+                        + status.getName() + ".");
     }
 }

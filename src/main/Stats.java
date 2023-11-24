@@ -15,6 +15,9 @@ public final class Stats {
         paused = true;
     }
 
+    /**
+     * Resets status to the implicit values.
+     */
     public void reset() {
         name = "";
         remainedTime = 0;

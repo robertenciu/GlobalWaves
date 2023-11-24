@@ -4,18 +4,21 @@ import media.Song;
 import media.Playlist;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public final class Statistics {
     private final ArrayList<Song> songs;
     private final ArrayList<Playlist> playlists;
     private final int topMaxSize = 5;
 
-    public Statistics(final ArrayList<Song> songs,  //TO DO MAKE SEPArate constructors
+    public Statistics(final ArrayList<Song> songs,
                       final ArrayList<Playlist> playlists) {
         this.songs = songs;
         this.playlists = playlists;
     }
+
+    /**
+     * @return The first 5 most liked songs.
+     */
     public ArrayList<String> getTop5Songs() {
         ArrayList<String> top = new ArrayList<>();
 
@@ -33,6 +36,10 @@ public final class Statistics {
         }
         return top;
     }
+
+    /**
+     * @return The first 5 most followed playlists.
+     */
     public ArrayList<String> getTop5Playlists() {
         ArrayList<String> top = new ArrayList<>();
 

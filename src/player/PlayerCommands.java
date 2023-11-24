@@ -9,9 +9,9 @@ interface PlayerCommands {
     void updateStatus(Integer timestamp, User user);
     void like(User user, ObjectNode obj);
     void forward(User user, ObjectNode obj);
-    void backward(final User user, final ObjectNode obj);
-    void next(final User user, final ObjectNode obj, final Integer timestamp);
-    void prev(final User user, final ObjectNode obj, final Integer timestamp);
+    void backward(User user, ObjectNode obj);
+    void next(User user, ObjectNode obj, Integer timestamp);
+    void prev(User user, ObjectNode obj, Integer timestamp);
     void addRemoveInPlaylist(User user,
                              Integer playlistId,
                              ObjectNode obj);
