@@ -178,8 +178,10 @@ public final class PlaylistPlayer extends Player {
             status.setName(prev.getName());
             loadedSong = prev;
         }
+
         super.timeUpdated = timestamp;
         status.setPaused(false);
+
         obj.put("message",
                 "Returned to previous track successfully. The current track is "
                         + status.getName() + ".");

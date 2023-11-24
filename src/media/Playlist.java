@@ -1,7 +1,7 @@
 package media;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.User;
+import user.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +61,7 @@ public final class Playlist {
 
     /**
      * Method that adds a playlist to the list of followed playlists of the user.
-     * Increases the followers count of the playlist.
+     * Increases/Decreases the followers count of the playlist.
      * Adds a specific message to the objectNode in order to show as output.
      *
      * @param user The current user.
@@ -101,10 +101,7 @@ public final class Playlist {
                 return this.getSongs().get(i + 1);
             }
         }
-        if (lastSong().getName().equals(song.getName())) {
-            return firstSong();
-        }
-        return null;
+        return firstSong();
     }
 
     /**

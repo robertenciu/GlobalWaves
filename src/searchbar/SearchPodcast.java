@@ -3,8 +3,8 @@ package searchbar;
 import media.Podcast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import main.Filters;
-import main.User;
+import command.Filters;
+import user.User;
 
 import java.util.ArrayList;
 

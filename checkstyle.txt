@@ -1,6 +1,6 @@
 Starting audit...
-[ERROR] D:\Programming\oop-project-2023-main\GlobalWaves\.\src\main\User.java:193:27: Parameter search should be final. [FinalParameters]
-[ERROR] D:\Programming\oop-project-2023-main\GlobalWaves\.\src\main\User.java:201:27: Parameter player should be final. [FinalParameters]
-[ERROR] D:\Programming\oop-project-2023-main\GlobalWaves\.\src\main\User.java:209:27: Parameter status should be final. [FinalParameters]
+[ERROR] D:\Programming\oop-project-2023-main\GlobalWaves\.\src\user\User.java:204:27: Parameter search should be final. [FinalParameters]
+[ERROR] D:\Programming\oop-project-2023-main\GlobalWaves\.\src\user\User.java:212:27: Parameter player should be final. [FinalParameters]
+[ERROR] D:\Programming\oop-project-2023-main\GlobalWaves\.\src\user\User.java:220:27: Parameter status should be final. [FinalParameters]
 Audit done.
 Checkstyle ends with 3 errors.

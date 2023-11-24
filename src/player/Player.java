@@ -1,14 +1,13 @@
 package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.Stats;
-import main.User;
+import user.User;
 import searchbar.Search;
 
 public abstract class Player implements PlayerCommands {
     protected boolean isLoaded;
     protected Integer timeUpdated;
-    protected Stats status;
+    protected Status status;
     protected User user;
 
     /**
@@ -19,7 +18,7 @@ public abstract class Player implements PlayerCommands {
      * @param status The reference of the user status.
      * @return The new created player.
      */
-    public static Player createPlayer(final Search search, final Stats status, final User user) {
+    public static Player createPlayer(final Search search, final Status status, final User user) {
         if (search.getType() == null) {
             return null;
         }
@@ -129,7 +128,7 @@ public abstract class Player implements PlayerCommands {
         obj.put("message", "The loaded source is not a song.");
     }
 
-    public final void setStatus(final Stats status) {
+    public final void setStatus(final Status status) {
         this.status = status;
     }
 

@@ -1,7 +1,7 @@
 package media;
 
 import fileio.input.LibraryInput;
-import main.User;
+import user.User;
 
 import java.util.ArrayList;
 

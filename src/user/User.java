@@ -1,7 +1,8 @@
-package main;
+package user;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import player.Status;
 import media.Song;
 import media.Playlist;
 import media.Episode;
@@ -23,7 +24,7 @@ public final class User {
     private final ArrayList<Playlist> followedPlaylists;
     private Search search;
     private Player player;
-    private Stats status;
+    private Status status;
 
     public User(final UserInput user) {
         this.likedSongs = new ArrayList<>();
@@ -83,6 +84,16 @@ public final class User {
             }
         }
         return null;
+    }
+
+    /**
+     * Method that returns the last played episode by the user on a specific podcast.
+     *
+     * @param podcastName The name of the podcast.
+     * @return The last episode played.
+     */
+    public Episode lastEpisode(final String podcastName) {
+        return this.getLastEpisodes().get(podcastName);
     }
 
     /**
@@ -202,11 +213,11 @@ public final class User {
         this.player = player;
     }
 
-    public Stats getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Stats status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }

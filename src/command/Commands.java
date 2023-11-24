@@ -1,4 +1,4 @@
-package main;
+package command;
 
 public final class Commands {
     private String command;

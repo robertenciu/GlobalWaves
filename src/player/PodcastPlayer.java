@@ -3,7 +3,6 @@ package player;
 import media.Episode;
 import media.Podcast;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.User;
 
 public final class PodcastPlayer extends Player {
     private final Podcast loadedPodcast;
@@ -12,27 +11,15 @@ public final class PodcastPlayer extends Player {
         this.loadedPodcast = podcast;
     }
 
-    private Episode nextEpisode(final User user) {
-        int lastEpisodeIndex = loadedPodcast.getEpisodes().indexOf(lastEpisode(user));
-        return loadedPodcast.getEpisodes().get(lastEpisodeIndex + 1);
-    }
-
-    private Episode lastEpisode(final User user) {
-        return user.getLastEpisodes().get(loadedPodcast.getName());
-    }
-
-    private Episode firstEpisode() {
-        return loadedPodcast.getEpisodes().get(0);
-    }
-
     @Override
     public void load(final Integer timestamp) {
         Podcast podcast = loadedPodcast;
         if (!user.getLastEpisodes().containsKey(podcast.getName())) {
+            // putting first episode in the user watch history of podcasts
             user.getLastEpisodes().put(podcast.getName(), podcast.getEpisodes().get(0));
         }
 
-        loadedEpisode = lastEpisode(user);
+        loadedEpisode = user.lastEpisode(loadedPodcast.getName());
         super.isLoaded = true;
 
         status.setPaused(false);
@@ -50,9 +37,12 @@ public final class PodcastPlayer extends Player {
             status.setRemainedTime(status.getRemainedTime() - amount);
         } else {
             loadedEpisode.setDuration(loadedEpisode.getInitialDuration());
-            Episode nextEpisode = nextEpisode(user);
+
+            Episode nextEpisode = loadedPodcast.nextEpisode(loadedEpisode);
             loadedEpisode = nextEpisode;
-            status.setRemainedTime(nextEpisode.getDuration());
+            status.setRemainedTime(loadedEpisode.getDuration());
+
+            // updating user last episode of the podcast
             user.getLastEpisodes().put(loadedPodcast.getName(), nextEpisode);
         }
         obj.put("message", "Skipped forward successfully.");
@@ -73,16 +63,21 @@ public final class PodcastPlayer extends Player {
 
     @Override
     public void next(final ObjectNode obj, final Integer timestamp) {
-        Episode nextEpisode = nextEpisode(user);
+        Episode nextEpisode = loadedPodcast.nextEpisode(loadedEpisode);
+        Episode firstEpisode = loadedPodcast.firstEpisode();
+
         switch (status.getRepeat()) {
             case "No Repeat":
-                if (nextEpisode.equals(firstEpisode())) {
+                if (nextEpisode.equals(firstEpisode)) {
                     status.reset();
                     isLoaded = false;
                 } else {
+                    // updating user last episode of the podcast
                     user.getLastEpisodes().put(loadedPodcast.getName(), nextEpisode);
+
                     status.setRemainedTime(nextEpisode.getDuration());
                     status.setName(nextEpisode.getName());
+                    loadedEpisode = nextEpisode;
                 }
                 break;
             case "Repeat Once":
@@ -105,15 +100,17 @@ public final class PodcastPlayer extends Player {
         do {
             timeRemaining = timeRemaining - loadedEpisode.getDuration();
             loadedEpisode.setDuration(loadedEpisode.getInitialDuration());
-            nextEpisode = nextEpisode(user);
+            nextEpisode = loadedPodcast.nextEpisode(loadedEpisode);
             assert nextEpisode != null;
 
-            if (nextEpisode.equals(firstEpisode())) {
+            if (nextEpisode.equals(loadedPodcast.firstEpisode())) {
                 handleNoRepeat();
                 return;
             }
 
             loadedEpisode = nextEpisode;
+
+            // updating user last episode of the podcast
             user.getLastEpisodes().put(loadedPodcast.getName(), loadedEpisode);
         } while (timeRemaining >= nextEpisode.getDuration());
 

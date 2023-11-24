@@ -1,4 +1,4 @@
-package main;
+package stats;
 
 import media.Song;
 import media.Playlist;
@@ -6,14 +6,24 @@ import media.Playlist;
 import java.util.ArrayList;
 
 public final class Statistics {
-    private final ArrayList<Song> songs;
-    private final ArrayList<Playlist> playlists;
+    private ArrayList<Song> songs;
+    private ArrayList<Playlist> playlists;
     private final int topMaxSize = 5;
+    private static Statistics instance = null;
 
-    public Statistics(final ArrayList<Song> songs,
-                      final ArrayList<Playlist> playlists) {
-        this.songs = songs;
-        this.playlists = playlists;
+    private Statistics() { }
+
+    /**
+     * SINGLETON PATTERN CLASS.
+     * This method returns the instance of the class and creates one if it doesn't exist.
+     *
+     * @return The instance of the class.
+     */
+    public static Statistics getInstance() {
+        if (instance == null) {
+            instance = new Statistics();
+        }
+        return instance;
     }
 
     /**
@@ -64,4 +74,13 @@ public final class Statistics {
         }
         return top;
     }
+
+    public void setSongs(final ArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
+    public void setPlaylists(final ArrayList<Playlist> playlists) {
+        this.playlists = playlists;
+    }
+
 }

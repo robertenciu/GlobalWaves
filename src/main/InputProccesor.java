@@ -3,16 +3,20 @@ package main;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import command.Commands;
 import media.Library;
 import media.Playlist;
 import player.Player;
 import searchbar.Search;
+import stats.Statistics;
+import player.Status;
+import user.User;
 
 import java.util.ArrayList;
 
 public final class InputProccesor {
     private Search search;
-    private Stats status;
+    private Status status;
     private Player player;
     private final Library library;
     private final User user;
@@ -34,7 +38,7 @@ public final class InputProccesor {
         if (user != null) {
             this.search = user.getSearch();
             if (user.getStatus() == null) {
-                user.setStatus(new Stats());
+                user.setStatus(new Status());
             }
             this.status = user.getStatus();
             this.player = user.getPlayer();
@@ -298,6 +302,7 @@ public final class InputProccesor {
         if (Playlist.exists(command.getPlaylistName(), library.getPlaylists())) {
             objectNode.put("message", "A playlist with the same name already exists.");
         } else if (user != null) {
+
             // Creating new playlist
             int id = user.getPlaylists().size() + 1;
             Playlist playlist = new Playlist(command.getPlaylistName(), id, user.getUsername());
@@ -357,7 +362,7 @@ public final class InputProccesor {
      * Handle getTop5songs command.
      */
     public void getTop5Songs() {
-        Statistics statistic = new Statistics(library.getSongs(), library.getPlaylists());
+        Statistics statistic = Statistics.getInstance();
         ArrayNode result = objectNode.putArray("result");
         ArrayList<String> top5 = statistic.getTop5Songs();
         for (String song : top5) {
@@ -369,7 +374,7 @@ public final class InputProccesor {
      * Handle getTop5Playlists command.
      */
     public void getTop5Playlists() {
-        Statistics statistic = new Statistics(library.getSongs(), library.getPlaylists());
+        Statistics statistic = Statistics.getInstance();
         ArrayNode resultPlaylist = objectNode.putArray("result");
         ArrayList<String> top5Playlists = statistic.getTop5Playlists();
         for (String playlist : top5Playlists) {

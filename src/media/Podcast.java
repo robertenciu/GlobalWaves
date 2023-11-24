@@ -37,6 +37,30 @@ public final class Podcast {
         return podcasts;
     }
 
+    /**
+     * This method returns the next episode of the podcast.
+     *
+     * @param episode The current episode.
+     * @return The next episode.
+     */
+    public Episode nextEpisode(final Episode episode) {
+        for (int i = 0; i < this.getEpisodes().size() - 1; i++) {
+            if (this.getEpisodes().get(i).getName().equals(episode.getName())) {
+                return this.getEpisodes().get(i + 1);
+            }
+        }
+        return firstEpisode();
+    }
+
+    /**
+     * This method returns the first episode of the current podcast.
+     *
+     * @return The first episode.
+     */
+    public Episode firstEpisode() {
+        return this.getEpisodes().get(0);
+    }
+
     public String getName() {
         return name;
     }

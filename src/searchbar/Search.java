@@ -1,8 +1,8 @@
 package searchbar;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import main.Filters;
-import main.User;
+import command.Filters;
+import user.User;
 import media.Library;
 import media.Playlist;
 import media.Podcast;

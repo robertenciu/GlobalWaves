@@ -6,8 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import command.Commands;
 import fileio.input.LibraryInput;
 import media.Library;
+import stats.Statistics;
+import user.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,6 +89,11 @@ public final class Main {
         // Media and User copy array creation into library (ready to be processed)
         Library library = new Library(libraryInput);
 
+        // Initializing statistics
+        Statistics statistics = Statistics.getInstance();
+        statistics.setSongs(library.getSongs());
+        statistics.setPlaylists(library.getPlaylists());
+
 
         for (Commands command : commands) {
             // Getting current user
@@ -93,6 +101,8 @@ public final class Main {
 
             // Setting output json objectNode for each command
             ObjectNode objectNode = objectMapper.createObjectNode();
+
+            // Setting input processor
             InputProccesor inputProccesor = new InputProccesor(library, user, objectNode, command);
 
             switch (command.getCommand()) {

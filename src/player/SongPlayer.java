@@ -47,6 +47,7 @@ public final class SongPlayer extends Player {
         status.setRemainedTime(loadedSong.getDuration());
         status.setName(loadedSong.getName());
         status.setPaused(false);
+
         super.timeUpdated = timestamp;
         super.isLoaded = true;
     }

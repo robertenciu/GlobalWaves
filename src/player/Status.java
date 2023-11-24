@@ -1,13 +1,13 @@
-package main;
+package player;
 
-public final class Stats {
+public final class Status {
     private String name;
     private Integer remainedTime;
     private String repeat;
     private boolean shuffle;
     private boolean paused;
 
-    public Stats() {
+    public Status() {
         name = "";
         remainedTime = 0;
         repeat = "No Repeat";
