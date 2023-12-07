@@ -1,13 +1,14 @@
 package stats;
 
+import media.Library;
 import media.Song;
 import media.Playlist;
+import user.User;
 
 import java.util.ArrayList;
 
 public final class Statistics {
-    private ArrayList<Song> songs;
-    private ArrayList<Playlist> playlists;
+    private Library library;
     private final int topMaxSize = 5;
     private static Statistics instance = null;
 
@@ -32,6 +33,7 @@ public final class Statistics {
     public ArrayList<String> getTop5Songs() {
         ArrayList<String> top = new ArrayList<>();
 
+        ArrayList<Song> songs = library.getSongs();
         songs.sort((o1, o2) -> {
             if (o1.getLikes() < o2.getLikes()) {
                 return 1;
@@ -44,6 +46,7 @@ public final class Statistics {
         for (Song song : songs.subList(0, topMaxSize)) {
             top.add(song.getName());
         }
+
         return top;
     }
 
@@ -53,7 +56,8 @@ public final class Statistics {
     public ArrayList<String> getTop5Playlists() {
         ArrayList<String> top = new ArrayList<>();
 
-        this.playlists.sort((o1, o2) -> {
+        ArrayList<Playlist> playlists = library.getPlaylists();
+        playlists.sort((o1, o2) -> {
             if (o1.getFollowers() < o2.getFollowers()) {
                 return 1;
             } else if (o1.getFollowers() > o2.getFollowers()) {
@@ -72,15 +76,36 @@ public final class Statistics {
                 iter++;
             }
         }
+
         return top;
     }
 
-    public void setSongs(final ArrayList<Song> songs) {
-        this.songs = songs;
+    public ArrayList<String> getOnlineUsers() {
+        ArrayList<String> onlineUsers = new ArrayList<>();
+
+        ArrayList<User> users = library.getUsers();
+        for (User user : users) {
+            if (user.getConnectionStatus().equals("Online")) {
+                onlineUsers.add(user.getUsername());
+            }
+        }
+
+        return onlineUsers;
     }
 
-    public void setPlaylists(final ArrayList<Playlist> playlists) {
-        this.playlists = playlists;
+    public ArrayList<String> getAllUsers() {
+        ArrayList<String> allUsers = new ArrayList<>();
+
+        ArrayList<User> users = library.getUsers();
+        for (User user : users) {
+            allUsers.add(user.getUsername());
+        }
+        // Add artists and hosts
+
+        return allUsers;
     }
 
+    public void setLibrary(final Library library) {
+        this.library = library;
+    }
 }

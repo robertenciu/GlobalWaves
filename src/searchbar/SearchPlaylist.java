@@ -13,19 +13,21 @@ public final class SearchPlaylist extends Search {
     }
 
     @Override
-    public void select(final String name) {
-        for (Playlist playlist : super.playlists) {
+    public String select(final String name, final User user) {
+        for (Playlist playlist : super.library.getPlaylists()) {
             if (name.equals(playlist.getName())) {
                 super.selectedPlaylist = playlist;
                 break;
             }
         }
         super.isSelected = true;
+
+        return "Successfully selected " + name + ".";
     }
 
     @Override
     public ArrayNode getSearchResultArray(final Filters filter, final User user) {
-        ArrayList<Playlist> result = new ArrayList<>(super.playlists);
+        ArrayList<Playlist> result = new ArrayList<>(super.library.getPlaylists());
 
         if (filter.getName() != null) {
             result = this.byName(result, filter.getName());

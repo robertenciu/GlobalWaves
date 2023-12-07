@@ -16,6 +16,8 @@ public final class Song {
     private String artist;
     private int likes;
 
+    public Song() { }
+
     public Song(final SongInput song) {
         this.name = song.getName();
         this.duration = song.getDuration();

@@ -2,11 +2,10 @@ package searchbar;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;
+import media.*;
+import user.Artist;
+import user.Host;
 import user.User;
-import media.Library;
-import media.Playlist;
-import media.Podcast;
-import media.Song;
 
 import java.util.ArrayList;
 
@@ -18,9 +17,10 @@ public abstract class Search {
     protected Song selectedSong;
     protected Podcast selectedPodcast;
     protected Playlist selectedPlaylist;
-    protected ArrayList<Song> songs;
-    protected ArrayList<Podcast> podcasts;
-    protected ArrayList<Playlist> playlists;
+    protected Album selectedAlbum;
+    protected Artist selectedArtist;
+    protected Host selectedHost;
+    protected Library library;
     private String type;
 
     /**
@@ -45,14 +45,21 @@ public abstract class Search {
             case "playlist":
                 search = new SearchPlaylist();
                 break;
+            case "artist":
+                search = new SearchArtist();
+                break;
+            case "Album":
+                search = new SearchAlbum();
+                break;
+            case "Host":
+                search = new SearchHost();
+                break;
             default:
                 break;
         }
         if (search != null) {
             search.setType(type);
-            search.setPodcasts(library.getPodcasts());
-            search.setPlaylists(library.getPlaylists());
-            search.setSongs(library.getSongs());
+            search.setLibrary(library);
         }
         return search;
     }
@@ -64,7 +71,7 @@ public abstract class Search {
      *
      * @param name The name of the chosen file from the search bar.
      */
-    public abstract void select(String name);
+    public abstract String select(String name, User user);
 
     /**
      * Method for listing an array of results based on the search filters.
@@ -95,18 +102,6 @@ public abstract class Search {
         return type;
     }
 
-    public final void setSongs(final ArrayList<Song> songs) {
-        this.songs = songs;
-    }
-
-    public final void setPodcasts(final ArrayList<Podcast> podcasts) {
-        this.podcasts = podcasts;
-    }
-
-    public final void setPlaylists(final ArrayList<Playlist> playlists) {
-        this.playlists = playlists;
-    }
-
     public final Playlist getSelectedPlaylist() {
         return selectedPlaylist;
     }
@@ -125,5 +120,21 @@ public abstract class Search {
 
     public final void setResult(final ArrayNode result) {
         this.result = result;
+    }
+
+    public Album getSelectedAlbum() {
+        return selectedAlbum;
+    }
+
+    public Artist getSelectedArtist() {
+        return selectedArtist;
+    }
+
+    public Host getSelectedHost() {
+        return selectedHost;
+    }
+
+    public void setLibrary(Library library) {
+        this.library = library;
     }
 }

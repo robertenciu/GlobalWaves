@@ -14,8 +14,8 @@ public final class SearchPodcast extends Search {
     }
 
     @Override
-    public void select(final String name) {
-        for (Podcast podcast : super.podcasts) {
+    public String select(final String name, final User user) {
+        for (Podcast podcast : super.library.getPodcasts()) {
             if (name.equals(podcast.getName())) {
                 super.selectedPodcast = podcast;
                 break;
@@ -23,11 +23,13 @@ public final class SearchPodcast extends Search {
         }
 
         super.isSelected = true;
+
+        return "Successfully selected " + name + ".";
     }
 
     @Override
     public ArrayNode getSearchResultArray(final Filters filter, final User user) {
-        ArrayList<Podcast> result = new ArrayList<>(super.podcasts);
+        ArrayList<Podcast> result = new ArrayList<>(super.library.getPodcasts());
 
         if (filter.getName() != null) {
             result = this.byName(result, filter.getName());

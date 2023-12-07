@@ -138,6 +138,14 @@ public final class Playlist {
         return this.getSongs().get(this.getSongs().size() - 1);
     }
 
+    public int totalLikes() {
+        int likes = 0;
+        for (Song song : songs) {
+            likes += song.getLikes();
+        }
+        return likes;
+    }
+
     public String getVisibility() {
         return visibility;
     }

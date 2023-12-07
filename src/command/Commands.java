@@ -1,19 +1,95 @@
 package command;
 
+import media.Song;
+
+import java.util.ArrayList;
+
 public final class Commands {
     private String command;
     private String username;
+    private String name;
     private Integer playlistId;
     private long seed;
     private String playlistName;
+    private int releaseYear;
+    private int age;
+    private String city;
+    private String description;
     private Integer timestamp;
     private Integer itemNumber;
     private String type;
     private Filters filters;
+    private int price;
+    private String date;
+    private ArrayList<Song> songs;
     public Commands() { }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(ArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public long getSeed() {
         return seed;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public void setSeed(final long seed) {

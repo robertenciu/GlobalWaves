@@ -126,7 +126,8 @@ public final class PodcastPlayer extends Player {
     }
     @Override
     public void updateStatus(final Integer timestamp) {
-        if (status.isPaused() || loadedEpisode == null) {
+        if (status.isPaused() || loadedEpisode == null
+                || user.getConnectionStatus().equals("Offline")) {
             return;
         }
 

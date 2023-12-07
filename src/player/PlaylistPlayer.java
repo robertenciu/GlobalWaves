@@ -60,7 +60,8 @@ public final class PlaylistPlayer extends Player {
 
     @Override
     public void updateStatus(final Integer timestamp) {
-        if (status.isPaused() || loadedSong == null) {
+        if (status.isPaused() || loadedSong == null
+                || user.getConnectionStatus().equals("Offline")) {
             return;
         }
 

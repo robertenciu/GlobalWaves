@@ -10,7 +10,6 @@ import command.Commands;
 import fileio.input.LibraryInput;
 import media.Library;
 import stats.Statistics;
-import user.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +48,7 @@ public final class Main {
             resultFile.delete();
         }
 
+        int i = 0;
         Files.createDirectories(path);
         for (File file : Objects.requireNonNull(directory.listFiles())) {
             if (file.getName().startsWith("library")) {
@@ -61,6 +61,8 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
+            if (++i == 4)
+                break;
         }
 
         Checker.calculateScore();
@@ -91,19 +93,15 @@ public final class Main {
 
         // Initializing statistics
         Statistics statistics = Statistics.getInstance();
-        statistics.setSongs(library.getSongs());
-        statistics.setPlaylists(library.getPlaylists());
+        statistics.setLibrary(library);
 
 
         for (Commands command : commands) {
-            // Getting current user
-            User user = User.getUserByName(library.getUsers(), command.getUsername());
-
             // Setting output json objectNode for each command
             ObjectNode objectNode = objectMapper.createObjectNode();
 
             // Setting input processor
-            InputProccesor inputProccesor = new InputProccesor(library, user, objectNode, command);
+            InputProccesor inputProccesor = new InputProccesor(library, objectNode, command);
 
             switch (command.getCommand()) {
                 case "search":
@@ -111,6 +109,9 @@ public final class Main {
                     break;
                 case "select":
                     inputProccesor.select();
+                    break;
+                case "switchConnectionStatus":
+                    inputProccesor.switchConnectionStatus();
                     break;
                 case "load":
                     inputProccesor.load();
@@ -165,6 +166,30 @@ public final class Main {
                     break;
                 case "getTop5Playlists":
                     inputProccesor.getTop5Playlists();
+                    break;
+                case "getOnlineUsers":
+                    inputProccesor.getOnlineUsers();
+                    break;
+                case "getAllUsers":
+                    inputProccesor.getAllUsers();
+                    break;
+                case "addUser":
+                    inputProccesor.addUser();
+                    break;
+                case "addAlbum":
+                    inputProccesor.addAlbum();
+                    break;
+                case "addEvent":
+                    inputProccesor.addEvent();
+                    break;
+                case "addMerch":
+                    inputProccesor.addMerch();
+                    break;
+                case "showAlbums":
+                    inputProccesor.showAlbums();
+                    break;
+                case "printCurrentPage":
+                    inputProccesor.printCurrentPage();
                     break;
                 default:
                     break;

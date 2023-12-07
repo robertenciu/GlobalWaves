@@ -1,5 +1,6 @@
 package main;
 
+import admin.Admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,9 +23,9 @@ public final class InputProccesor {
     private final User user;
     private final ObjectNode objectNode;
     private final Commands command;
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ArrayNode empty = objectMapper.createArrayNode();
     public InputProccesor(final Library library,
-                          final User user,
                           final ObjectNode objectNode,
                           final Commands command) {
         this.library = library;
@@ -34,7 +35,12 @@ public final class InputProccesor {
         this.command = command;
         objectNode.put("command", command.getCommand());
 
-        this.user = user;
+        if (command.getUsername() != null) {
+            objectNode.put("user", command.getUsername());
+        }
+
+        // Getting current user
+        this.user = User.getUserByName(library.getUsers(), command.getUsername());
         if (user != null) {
             this.search = user.getSearch();
             if (user.getStatus() == null) {
@@ -42,7 +48,6 @@ public final class InputProccesor {
             }
             this.status = user.getStatus();
             this.player = user.getPlayer();
-            objectNode.put("user", command.getUsername());
         }
 
         objectNode.put("timestamp", command.getTimestamp());
@@ -52,6 +57,12 @@ public final class InputProccesor {
      * Handle search command.
      */
     public void search() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            objectNode.put("results", empty);
+            return;
+        }
+
         if (player != null && player.isLoaded()) {
             player.updateStatus(command.getTimestamp());
             player.setLoaded(false);
@@ -61,7 +72,6 @@ public final class InputProccesor {
         status.reset();
 
         // New search
-        assert user != null;
         user.setSearch(Search.newSearch(command.getType(), library));
         search = user.getSearch();
 
@@ -77,14 +87,19 @@ public final class InputProccesor {
      * Handle select command.
      */
     public void select() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (search == null || search.getResult() == null) {
             objectNode.put("message", "Please conduct a search before making a selection.");
             return;
         }
         if (command.getItemNumber() <= search.getResultsCount()) {
             String selected = search.getResult().get(command.getItemNumber() - 1).textValue();
-            search.select(selected);
-            objectNode.put("message", "Successfully selected " + selected + ".");
+            String message = search.select(selected, user);
+            objectNode.put("message", message);
         } else {
             objectNode.put("message", "The selected ID is too high.");
         }
@@ -95,6 +110,11 @@ public final class InputProccesor {
      * Handle load command.
      */
     public void load() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (search == null) {
             objectNode.put("message", "Please select a source before attempting to load.");
             return;
@@ -103,7 +123,6 @@ public final class InputProccesor {
             search.setSelected(false); // No media selected after loading
 
             // Creating player depending on media type
-            assert user != null;
             user.setPlayer(Player.createPlayer(search, status, user));
             player = user.getPlayer();
 
@@ -123,6 +142,11 @@ public final class InputProccesor {
      * Handle playPause command.
      */
     public void playPause() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message",
                     "Please load a source before attempting to pause or resume playback.");
@@ -143,6 +167,11 @@ public final class InputProccesor {
      * Handle repeat command.
      */
     public void repeat() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message",
                     "Please load a source before setting the repeat status.");
@@ -166,6 +195,11 @@ public final class InputProccesor {
      * Handle shuffle command.
      */
     public void shuffle() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message", "Please load a source before using the shuffle function.");
             return;
@@ -185,6 +219,11 @@ public final class InputProccesor {
      * Handle forward command.
      */
     public void forward() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message", "Please load a source before attempting to forward.");
             return;
@@ -204,6 +243,11 @@ public final class InputProccesor {
      * Handle backward command.
      */
     public void backward() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message", "Please select a source before rewinding.");
             return;
@@ -223,6 +267,11 @@ public final class InputProccesor {
      * Handle next command.
      */
     public void next() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message", "Please load a source before skipping to the next track.");
             return;
@@ -242,6 +291,11 @@ public final class InputProccesor {
      * Handle prev command.
      */
     public void prev() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player == null || !player.isLoaded()) {
             objectNode.put("message",
                     "Please load a source before returning to the previous track.");
@@ -275,6 +329,11 @@ public final class InputProccesor {
      * Handle like command.
      */
     public void like() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player != null && player.isLoaded()) {
             player.updateStatus(command.getTimestamp());
             player.like(objectNode);
@@ -287,6 +346,11 @@ public final class InputProccesor {
      * Handle addRemoveInPlaylist command.
      */
     public void addRemoveInPlaylist() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (player != null && player.isLoaded()) {
             player.addRemoveInPlaylist(command.getPlaylistId(), objectNode);
         } else {
@@ -299,9 +363,14 @@ public final class InputProccesor {
      * Handle createPlaylist command.
      */
     public void createPlaylist() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (Playlist.exists(command.getPlaylistName(), library.getPlaylists())) {
             objectNode.put("message", "A playlist with the same name already exists.");
-        } else if (user != null) {
+        } else {
 
             // Creating new playlist
             int id = user.getPlaylists().size() + 1;
@@ -335,6 +404,11 @@ public final class InputProccesor {
      * Handle switchVisibility command.
      */
     public void switchVisibility() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (user.getPlaylists().size() < command.getPlaylistId()) {
             objectNode.put("message", "The specified playlist ID is too high.");
         } else {
@@ -347,11 +421,16 @@ public final class InputProccesor {
      * Handle follow command.
      */
     public void follow() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
         if (search == null || !search.isSelected()) {
             objectNode.put("message", "Please select a source before following or unfollowing.");
             return;
         }
-        if (search.getSelectedPlaylist() != null && user != null) {
+        if (search.getSelectedPlaylist() != null) {
             Playlist.follow(user, search.getSelectedPlaylist(), objectNode);
         } else {
             objectNode.put("message", "The selected source is not a playlist.");
@@ -375,10 +454,96 @@ public final class InputProccesor {
      */
     public void getTop5Playlists() {
         Statistics statistic = Statistics.getInstance();
-        ArrayNode resultPlaylist = objectNode.putArray("result");
+        ArrayNode result = objectNode.putArray("result");
         ArrayList<String> top5Playlists = statistic.getTop5Playlists();
         for (String playlist : top5Playlists) {
-            resultPlaylist.add(playlist);
+            result.add(playlist);
         }
+    }
+
+    public void getOnlineUsers() {
+        Statistics statistic = Statistics.getInstance();
+        ArrayNode result = objectNode.putArray("result");
+        ArrayList<String> onlineUsers = statistic.getOnlineUsers();
+        for (String onlineUser : onlineUsers) {
+            result.add(onlineUser);
+        }
+    }
+
+    public void getAllUsers() {
+        Statistics statistic = Statistics.getInstance();
+        ArrayNode result = objectNode.putArray("result");
+        ArrayList<String> allUsers = statistic.getAllUsers();
+        for (String abstractUser : allUsers) {
+            result.add(abstractUser);
+        }
+    }
+
+    public void switchConnectionStatus() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername() + " doesn't exist.");
+            return;
+        }
+
+        String message = user.switchConnectionStatus(command.getTimestamp());
+        objectNode.put("message", message);
+    }
+
+    public void addUser() {
+        if (user != null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " is already taken.");
+            return;
+        }
+
+        String message = Admin.addUser(command, library);
+        objectNode.put("message", message);
+    }
+
+    public void showAlbums() {
+        ArrayNode result = Admin.showAlbums(command, library);
+        objectNode.put("result", result);
+    }
+
+    public void addAlbum() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.addAlbum(command, library);
+        objectNode.put("message", message);
+    }
+
+    public void addEvent() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.addEvent(command, library);
+        objectNode.put("message", message);
+    }
+
+    public void addMerch() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.addMerch(command, library);
+        objectNode.put("message", message);
+    }
+    public void printCurrentPage() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
+        String message = user.printCurrentPage();
+        objectNode.put("message", message);
     }
 }
