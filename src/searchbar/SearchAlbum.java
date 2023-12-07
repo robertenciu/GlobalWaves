@@ -1,5 +1,6 @@
 package searchbar;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;
 import media.Album;
@@ -23,7 +24,27 @@ public final class SearchAlbum extends Search {
 
     @Override
     public ArrayNode getSearchResultArray(final Filters filter, final User user) {
-        return null;
+        ArrayList<Album> result = new ArrayList<>(super.library.getAlbums());
+
+        if (filter.getName() != null) {
+            result = this.byName(result, filter.getName());
+        }
+        if (filter.getOwner() != null) {
+            result = this.byOwner(result, filter.getOwner());
+        }
+        if (filter.getDescription() != null) {
+            result = this.byDescription(result, filter.getDescription());
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode resultArray = objectMapper.createArrayNode();
+
+        resultsCount = Math.min(maxResultSize, result.size());
+        for (Album album : result.subList(0, resultsCount)) {
+            resultArray.add(album.getName());
+        }
+
+        return resultArray;
     }
 
     public ArrayList<Album> byName(final ArrayList<Album> albums, final String name) {

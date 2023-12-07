@@ -21,7 +21,7 @@
 }, {
   "command" : "getOnlineUsers",
   "timestamp" : 25,
-  "result" : [ "alice22", "bob35", "carol19", "david27", "emily30", "frank21", "grace25", "henry26", "irene33", "jack29", "melodymaster", "rhythmrider", "beatblazer", "harmonichero" ]
+  "result" : [ "alice22", "bob35", "carol19", "david27", "emily30", "frank21", "grace25", "henry26", "irene33", "jack29" ]
 }, {
   "command" : "addAlbum",
   "user" : "melodymaster",
@@ -67,7 +67,7 @@
   "command" : "printCurrentPage",
   "user" : "alice22",
   "timestamp" : 75,
-  "message" : "Nimic deocamdata"
+  "message" : "Albums:\n\t[Harmonic Horizons]\n\nMerch:\n\t[]\n\nEvents:\n\t[Harmonic Convergence - 15-06-2022:\n\tA night of mesmerizing melodies and soundscapes., Echoes of the Future - 23-09-2022:\n\tExploring futuristic sounds in a live performance.]"
 }, {
   "command" : "addMerch",
   "user" : "melodymaster",
@@ -124,5 +124,5 @@
   "command" : "printCurrentPage",
   "user" : "bob35",
   "timestamp" : 120,
-  "message" : "Nimic deocamdata"
+  "message" : "Albums:\n\t[Harmonic Horizons]\n\nMerch:\n\t[Harmonic T-Shirt - 25:\n\tLimited edition T-shirt featuring unique harmonic designs., Echoes Cap - 20:\n\tStylish cap with the 'Echoes of Harmony' album artwork.]\n\nEvents:\n\t[Harmonic Convergence - 15-06-2022:\n\tA night of mesmerizing melodies and soundscapes., Echoes of the Future - 23-09-2022:\n\tExploring futuristic sounds in a live performance.]"
 } ]

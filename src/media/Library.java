@@ -1,6 +1,7 @@
 package media;
 
 import fileio.input.LibraryInput;
+import media.music.Song;
 import user.Artist;
 import user.Host;
 import user.User;

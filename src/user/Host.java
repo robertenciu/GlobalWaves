@@ -3,8 +3,8 @@ package user;
 import command.Commands;
 import media.Library;
 
-public class Host extends User {
-    public Host () {
+public final class Host extends User {
+    public Host() {
         super();
         super.page = Page.HOST;
     }

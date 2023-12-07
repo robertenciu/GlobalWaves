@@ -11,7 +11,16 @@ public final class Filters {
     private String releaseYear;
     private String artist;
     private String owner;
+    private String description;
     public Filters() { }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
     public String getName() {
         return name;

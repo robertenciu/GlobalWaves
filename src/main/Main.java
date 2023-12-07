@@ -61,7 +61,7 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (++i == 4)
+            if (++i == 5)
                 break;
         }
 

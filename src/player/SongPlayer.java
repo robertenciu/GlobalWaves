@@ -1,7 +1,7 @@
 package player;
 
 import media.Playlist;
-import media.Song;
+import media.music.Song;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class SongPlayer extends Player {

@@ -6,29 +6,33 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import command.Commands;
 import media.Album;
 import media.Library;
-import media.Song;
+import media.music.Song;
 import user.Artist;
 import user.Host;
 import user.User;
 
 public class Admin {
+    private Admin() { }
     public static String addUser(final Commands command, final Library library) {
-        User newUser;
+        User newUser = null;
         if (command.getType().equals("user")) {
             newUser = new User();
+            newUser.setConnectionStatus("Online");
         } else if (command.getType().equals("artist")) {
             newUser = new Artist();
-        } else {
+        } else if (command.getType().equals("host")){
             newUser = new Host();
         }
 
+        assert newUser != null;
         newUser.setUsername(command.getUsername());
         newUser.setAge(command.getAge());
         newUser.setCity(command.getCity());
 
-        library.getUsers().add(newUser);
-
         switch (command.getType()) {
+            case "user":
+                library.getUsers().add(newUser);
+                break;
             case "host":
                 library.getHosts().add((Host) newUser);
                 break;
@@ -46,7 +50,7 @@ public class Admin {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode result = objectMapper.createArrayNode();
 
-        Artist artist = Artist.getArtistByName(library.getArtists(), command.getUsername());
+        Artist artist = Artist.getArtist(library.getArtists(), command);
         assert artist != null;
         for (Album album : artist.getAlbums()) {
             ObjectNode obj = objectMapper.createObjectNode();

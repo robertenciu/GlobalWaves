@@ -2,12 +2,14 @@ package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import media.Playlist;
-import media.Song;
+import media.music.Song;
 
-public final class PlaylistPlayer extends Player {
-    private final Playlist loadedPlaylist;
+public class PlaylistPlayer extends Player {
+    private Playlist loadedPlaylist;
     private Song loadedSong;
     private boolean reachedPlaylistEnd;
+    public PlaylistPlayer() {
+    }
     public PlaylistPlayer(final Playlist playlist) {
         this.loadedPlaylist = playlist;
     }

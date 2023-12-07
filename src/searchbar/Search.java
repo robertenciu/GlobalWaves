@@ -3,11 +3,10 @@ package searchbar;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;
 import media.*;
+import media.music.Song;
 import user.Artist;
 import user.Host;
 import user.User;
-
-import java.util.ArrayList;
 
 public abstract class Search {
     protected ArrayNode result;
@@ -48,10 +47,10 @@ public abstract class Search {
             case "artist":
                 search = new SearchArtist();
                 break;
-            case "Album":
+            case "album":
                 search = new SearchAlbum();
                 break;
-            case "Host":
+            case "host":
                 search = new SearchHost();
                 break;
             default:

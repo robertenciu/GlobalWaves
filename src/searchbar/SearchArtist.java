@@ -40,6 +40,7 @@ public final class SearchArtist extends Search {
         for (Artist artist : result.subList(0, resultsCount)) {
             resultArray.add(artist.getUsername());
         }
+
         return resultArray;
     }
 

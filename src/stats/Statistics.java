@@ -1,8 +1,10 @@
 package stats;
 
 import media.Library;
-import media.Song;
+import media.music.Song;
 import media.Playlist;
+import user.Artist;
+import user.Host;
 import user.User;
 
 import java.util.ArrayList;
@@ -96,11 +98,17 @@ public final class Statistics {
     public ArrayList<String> getAllUsers() {
         ArrayList<String> allUsers = new ArrayList<>();
 
-        ArrayList<User> users = library.getUsers();
-        for (User user : users) {
+        for (User user : library.getUsers()) {
             allUsers.add(user.getUsername());
         }
-        // Add artists and hosts
+
+        for (Artist artist : library.getArtists()) {
+            allUsers.add(artist.getUsername());
+        }
+
+        for (Host host : library.getHosts()) {
+            allUsers.add((host.getUsername()));
+        }
 
         return allUsers;
     }

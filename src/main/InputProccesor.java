@@ -40,7 +40,7 @@ public final class InputProccesor {
         }
 
         // Getting current user
-        this.user = User.getUserByName(library.getUsers(), command.getUsername());
+        this.user = User.getUser(library, command);
         if (user != null) {
             this.search = user.getSearch();
             if (user.getStatus() == null) {

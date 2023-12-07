@@ -1,4 +1,4 @@
-package media;
+package media.music;
 
 import fileio.input.LibraryInput;
 import fileio.input.SongInput;

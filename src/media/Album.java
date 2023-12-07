@@ -1,5 +1,7 @@
 package media;
 
+import media.music.Song;
+
 import java.util.ArrayList;
 
 public class Album {

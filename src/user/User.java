@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import command.Commands;
 import media.Library;
 import player.Status;
-import media.Song;
+import media.music.Song;
 import media.Playlist;
 import media.Episode;
 import fileio.input.UserInput;
@@ -20,7 +20,7 @@ public class User {
     private String username;
     private int age;
     private String city;
-    private ArrayList<Song> likedSongs;
+    private final ArrayList<Song> likedSongs;
     private final ArrayList<Playlist> playlists;
     private final HashMap<String, Episode> lastEpisodes;
     private final ArrayList<Playlist> followedPlaylists;
@@ -28,7 +28,7 @@ public class User {
     private Player player;
     private Status status;
     private final int maxResults = 5;
-    private String connectionStatus = "Online";
+    private String connectionStatus;
     protected Page page;
 
     public User() {
@@ -48,6 +48,7 @@ public class User {
         this.age = user.getAge();
         this.city = user.getCity();
         this.page = Page.HOME;
+        this.connectionStatus = "Online";
     }
 
     /**
@@ -69,20 +70,28 @@ public class User {
     /**
      * This is a method that returns a user based on the provided username from a list of users.
      *
-     * @param users The list of users.
-     * @param name The username.
+     * @param library   The list of users.
+     * @param command The username.
      * @return The user object matching the given username.
      */
-    public static User getUserByName(final ArrayList<User> users, final String name) {
-        if (users.isEmpty() || name == null) {
-            return null;
-        }
-        for (User user : users) {
-            if (user.getUsername().equals(name)) {
-                return user;
+    public static User getUser(final Library library, final Commands command) {
+        User currentUser = null;
+        for (User user : library.getUsers()) {
+            if (user.getUsername().equals(command.getUsername())) {
+                currentUser = user;
+                break;
             }
         }
-        return null;
+
+        if (currentUser == null) {
+            currentUser = Artist.getArtist(library.getArtists(), command);
+        }
+
+//        if (currentUser == null) {
+//           currentUser = Host.getHost(library.getHosts(), command);
+//        }
+
+        return currentUser;
     }
 
     /**
@@ -167,7 +176,7 @@ public class User {
         }
     }
 
-    public String switchConnectionStatus(Integer timestamp) {
+    public final String switchConnectionStatus(Integer timestamp) {
         if (this.connectionStatus.equals("Online")) {
             if (player != null && player.isLoaded()) {
                 player.updateStatus(timestamp);
@@ -229,7 +238,7 @@ public class User {
     private String printLikedContent() {
         return null;
     }
-    public String printCurrentPage() {
+    public final String printCurrentPage() {
         if (page == Page.HOME) {
             return printHome();
         }
@@ -258,63 +267,59 @@ public class User {
     public String addMerch(final Commands command, final Library library) {
         return this.username + " is not an artist.";
     }
-    public ArrayList<Playlist> getFollowedPlaylists() {
+    public final ArrayList<Playlist> getFollowedPlaylists() {
         return followedPlaylists;
     }
 
-    public ArrayList<Song> getLikedSongs() {
+    public final ArrayList<Song> getLikedSongs() {
         return likedSongs;
     }
 
-    public void setLikedSongs(final ArrayList<Song> likedSongs) {
-        this.likedSongs = likedSongs;
-    }
-
-    public ArrayList<Playlist> getPlaylists() {
+    public final ArrayList<Playlist> getPlaylists() {
         return playlists;
     }
 
-    public HashMap<String, Episode> getLastEpisodes() {
+    public final HashMap<String, Episode> getLastEpisodes() {
         return lastEpisodes;
     }
 
-    public String getUsername() {
+    public final String getUsername() {
         return username;
     }
 
-    public void setUsername(final String username) {
+    public final void setUsername(final String username) {
         this.username = username;
     }
 
-    public int getAge() {
+    public final int getAge() {
         return age;
     }
 
-    public void setAge(final int age) {
+    public final void setAge(final int age) {
         this.age = age;
     }
 
-    public String getCity() {
+    public final String getCity() {
         return city;
     }
 
-    public void setCity(final String city) {
+    public final void setCity(final String city) {
         this.city = city;
     }
 
-    public Search getSearch() {
+    public final Search getSearch() {
         return search;
     }
 
-    public void setSearch(Search search) {
+    public final void setSearch(final Search search) {
         this.search = search;
     }
 
-    public Player getPlayer() {
+    public final Player getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public final void setPlayer(final Player player) {
         this.player = player;
     }
 
@@ -322,19 +327,19 @@ public class User {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public final void setStatus(final Status status) {
         this.status = status;
     }
 
-    public String getConnectionStatus() {
+    public final String getConnectionStatus() {
         return connectionStatus;
     }
 
-    public void setConnectionStatus(String connectionStatus) {
+    public final void setConnectionStatus(final String connectionStatus) {
         this.connectionStatus = connectionStatus;
     }
 
-    public void setPage(Page page) {
+    public final void setPage(final Page page) {
         this.page = page;
     }
 }
