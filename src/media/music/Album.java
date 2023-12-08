@@ -1,17 +1,13 @@
-package media;
-
-import media.music.Song;
+package media.music;
 
 import java.util.ArrayList;
 
-public class Album {
-    private final String owner;
-    private String name;
+public final class Album extends MusicCollection {
     private int releaseYear;
     private String description;
-    private ArrayList<Song> songs = new ArrayList<>();
     public Album (String owner) {
-        this.owner = owner;
+        super.owner = owner;
+        super.type = MusicCollectionType.ALBUM;
     }
     public static boolean exists(final ArrayList<Album> albums, final String name) {
         for (Album album : albums) {
@@ -21,14 +17,6 @@ public class Album {
         }
 
         return false;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getReleaseYear() {
@@ -47,15 +35,4 @@ public class Album {
         this.description = description;
     }
 
-    public ArrayList<Song> getSongs() {
-        return songs;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setSongs(ArrayList<Song> songs) {
-        this.songs = songs;
-    }
 }

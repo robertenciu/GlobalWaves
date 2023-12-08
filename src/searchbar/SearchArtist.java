@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;
 import user.Artist;
-import user.Page;
+import user.PageLocator;
 import user.User;
 
 import java.util.ArrayList;
@@ -20,7 +20,8 @@ public final class SearchArtist extends Search {
             }
         }
         super.isSelected = true;
-        user.setPage(Page.ARTIST);
+        user.setCurrentPageLocator(PageLocator.ARTIST);
+        user.setCurrentPage(selectedArtist);
 
         return "Successfully selected " + name + "'s page.";
     }

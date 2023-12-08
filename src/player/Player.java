@@ -32,6 +32,9 @@ public abstract class Player implements PlayerCommands {
         if (search.getType().equals("playlist")) {
             player = new PlaylistPlayer(search.getSelectedPlaylist());
         }
+        if (search.getType().equals("album")) {
+            player = new AlbumPlayer(search.getSelectedAlbum());
+        }
         if (player != null) {
             player.setStatus(status);
             player.setUser(user);

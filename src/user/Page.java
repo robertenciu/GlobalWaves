@@ -1,8 +1,5 @@
 package user;
 
-public enum Page {
-    HOME,
-    LIKED_CONTENT,
-    ARTIST,
-    HOST
+public interface Page {
+    public String printPage();
 }

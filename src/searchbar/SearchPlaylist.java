@@ -1,6 +1,6 @@
 package searchbar;
 
-import media.Playlist;
+import media.music.Playlist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;

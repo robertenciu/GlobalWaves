@@ -2,7 +2,7 @@ package stats;
 
 import media.Library;
 import media.music.Song;
-import media.Playlist;
+import media.music.Playlist;
 import user.Artist;
 import user.Host;
 import user.User;

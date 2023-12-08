@@ -1,4 +1,4 @@
-package media;
+package media.content;
 
 import java.util.ArrayList;
 

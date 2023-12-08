@@ -1,4 +1,4 @@
-package media;
+package media.podcast;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,9 @@ public final class Podcast {
     private String name;
     private String owner;
     private ArrayList<Episode> episodes;
+    public Podcast(final String owner) {
+        this.owner = owner;
+    }
 
     public Podcast(final PodcastInput podcast) {
         this.name = podcast.getName();
@@ -35,6 +38,16 @@ public final class Podcast {
             podcasts.add(podcast);
         }
         return podcasts;
+    }
+
+    public static boolean exists(final ArrayList<Podcast> podcasts, final String name) {
+        for (Podcast podcast : podcasts) {
+            if (podcast.getName().equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

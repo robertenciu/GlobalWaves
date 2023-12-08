@@ -2,21 +2,26 @@ package user;
 
 import command.Commands;
 import media.*;
+import media.content.Event;
+import media.content.Merch;
+import media.music.Album;
+import media.music.MusicCollection;
+import media.music.Playlist;
 import media.music.Song;
 
 import java.util.ArrayList;
 
-public final class Artist extends User {
+public final class Artist extends User implements Page {
 
     private final ArrayList<Album> albums = new ArrayList<>();
     private final ArrayList<Event> events = new ArrayList<>();
     private final ArrayList<Merch> merches = new ArrayList<>();
     public Artist() {
         super();
-        super.page = Page.ARTIST;
     }
 
-    public String printArtist() {
+    @Override
+    public String printPage() {
         StringBuilder result = new StringBuilder("Albums:\n\t[");
 
         for (Album album : albums) {
@@ -57,20 +62,47 @@ public final class Artist extends User {
     }
 
     /**
-     * @param artists
-     * @param command
-     * @return
+     * @param artists a
+     * @param name a
+     * @return a
      */
-    public static Artist getArtist(final ArrayList<Artist> artists, final Commands command) {
-        if (artists.isEmpty() || command == null) {
+    public static Artist getArtist(final ArrayList<Artist> artists, final String name) {
+        if (artists.isEmpty() || name == null) {
             return null;
         }
         for (Artist artist : artists) {
-            if (artist.getUsername().equals(command.getUsername())) {
+            if (artist.getUsername().equals(name)) {
                 return artist;
             }
         }
         return null;
+    }
+
+    public boolean removeCurrentUser(Library library) {
+        if (isInteracting) {
+            return false;
+        }
+
+        library.getArtists().remove(this);
+        for (MusicCollection musicCollection : albums) {
+            for (Song song : musicCollection.getSongs()) {
+                for (User user : song.getLikedBy()) {
+                    user.getLikedSongs().remove(song);
+                }
+            }
+            for (Playlist playlist : library.getPlaylists()) {
+                playlist.getSongs().removeAll(musicCollection.getSongs());
+            }
+            library.getSongs().removeAll(musicCollection.getSongs());
+        }
+        library.getAlbums().removeAll(this.albums);
+        library.getMerches().removeAll(this.merches);
+        library.getEvents().removeAll(this.events);
+        this.events.clear();
+        this.merches.clear();
+        this.albums.clear();
+
+        return true;
     }
     private boolean hasDuplicateSongs(final ArrayList<Song> songs) {
         for (int i = 0; i < songs.size() - 1; i++) {
@@ -135,6 +167,8 @@ public final class Artist extends User {
 
         return year <= yearGap[1] && year >= yearGap[0];
     }
+
+    @Override
     public String addEvent(final Commands command, final Library library) {
         if (Event.exists(events, command.getName())) {
             return super.getUsername() + " has another event with the same name.";
@@ -157,6 +191,8 @@ public final class Artist extends User {
     private boolean isPriceValid(final Commands command) {
         return command.getPrice() >= 0;
     }
+
+    @Override
     public String addMerch(final Commands command, final Library library) {
         if (Merch.exists(merches, command.getName())) {
             return super.getUsername() + " has merchandise with the same name.";

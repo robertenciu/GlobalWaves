@@ -1,6 +1,7 @@
 package command;
 
 import media.music.Song;
+import media.podcast.Episode;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,16 @@ public final class Commands {
     private int price;
     private String date;
     private ArrayList<Song> songs;
+    private ArrayList<Episode> episodes;
     public Commands() { }
+
+    public ArrayList<Episode> getEpisodes() {
+        return episodes;
+    }
+
+    public void setEpisodes(final ArrayList<Episode> episodes) {
+        this.episodes = episodes;
+    }
 
     public int getPrice() {
         return price;

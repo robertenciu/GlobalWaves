@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import command.Commands;
 import media.Library;
+import media.music.MusicCollection;
 import player.Status;
 import media.music.Song;
-import media.Playlist;
-import media.Episode;
+import media.music.Playlist;
+import media.podcast.Episode;
 import fileio.input.UserInput;
 import fileio.input.LibraryInput;
 import player.Player;
@@ -15,28 +16,34 @@ import searchbar.Search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
-public class User {
-    private String username;
-    private int age;
-    private String city;
+public class User implements Page {
+    protected String username;
+    protected int age;
+    protected String city;
+    protected CopyOnWriteArraySet<User> usersInteracting = new CopyOnWriteArraySet<>();
+    protected boolean isInteracting;
     private final ArrayList<Song> likedSongs;
     private final ArrayList<Playlist> playlists;
     private final HashMap<String, Episode> lastEpisodes;
     private final ArrayList<Playlist> followedPlaylists;
+    private PageLocator currentPageLocator;
+    private Page currentPage;
     private Search search;
     private Player player;
     private Status status;
     private final int maxResults = 5;
     private String connectionStatus;
-    protected Page page;
+
 
     public User() {
         this.likedSongs = new ArrayList<>();
         this.playlists = new ArrayList<>();
         this.lastEpisodes = new HashMap<>();
         this.followedPlaylists = new ArrayList<>();
-        this.page = Page.HOME;
+        this.currentPageLocator = PageLocator.HOME;
+        this.currentPage = this;
     }
 
     public User(final UserInput user) {
@@ -47,8 +54,9 @@ public class User {
         this.username = user.getUsername();
         this.age = user.getAge();
         this.city = user.getCity();
-        this.page = Page.HOME;
+        this.currentPageLocator = PageLocator.HOME;
         this.connectionStatus = "Online";
+        this.currentPage = this;
     }
 
     /**
@@ -71,27 +79,48 @@ public class User {
      * This is a method that returns a user based on the provided username from a list of users.
      *
      * @param library   The list of users.
-     * @param command The username.
+     * @param name The username.
      * @return The user object matching the given username.
      */
-    public static User getUser(final Library library, final Commands command) {
+    public static User getUser(final Library library, final String name) {
         User currentUser = null;
         for (User user : library.getUsers()) {
-            if (user.getUsername().equals(command.getUsername())) {
+            if (user.getUsername().equals(name)) {
                 currentUser = user;
                 break;
             }
         }
 
         if (currentUser == null) {
-            currentUser = Artist.getArtist(library.getArtists(), command);
+            currentUser = Artist.getArtist(library.getArtists(), name);
         }
 
-//        if (currentUser == null) {
-//           currentUser = Host.getHost(library.getHosts(), command);
-//        }
+        if (currentUser == null) {
+           currentUser = Host.getHost(library.getHosts(), name);
+        }
 
         return currentUser;
+    }
+
+    public boolean removeCurrentUser(Library library) {
+        if (this.isInteracting) {
+            return false;
+        }
+
+        library.getUsers().remove(this);
+        for (MusicCollection musicCollection : playlists) {
+            library.getSongs().removeAll(musicCollection.getSongs());
+        }
+        library.getPlaylists().removeAll(this.playlists);
+        this.search = null;
+        this.player = null;
+        this.status = null;
+        this.likedSongs.clear();
+        this.playlists.clear();
+        this.lastEpisodes.clear();
+        this.followedPlaylists.clear();
+
+        return true;
     }
 
     /**
@@ -238,24 +267,17 @@ public class User {
     private String printLikedContent() {
         return null;
     }
-    public final String printCurrentPage() {
-        if (page == Page.HOME) {
+
+    @Override
+    public String printPage() {
+        if (currentPageLocator == PageLocator.HOME) {
             return printHome();
         }
-
-        if (page == Page.LIKED_CONTENT) {
+        if (currentPageLocator == PageLocator.LIKED_CONTENT) {
             return printLikedContent();
         }
 
-        if (page == Page.ARTIST) {
-            return search.getSelectedArtist().printArtist();
-        }
-
-        if (page == Page.HOST) {
-            return search.getSelectedHost().printHost();
-        }
-
-        return null;
+        return currentPage.printPage();
     }
 
     public String addAlbum(final Commands command, final Library library) {
@@ -266,6 +288,15 @@ public class User {
     }
     public String addMerch(final Commands command, final Library library) {
         return this.username + " is not an artist.";
+    }
+    public String addPodcast(final Commands command, final Library library) {
+        return this.username + " is not a host.";
+    }
+    public String addAnnouncement(final Commands command, final Library library) {
+        return this.username + " is not a host.";
+    }
+    public String removeAnnouncement(Commands command, Library library) {
+        return this.username + " is not a host.";
     }
     public final ArrayList<Playlist> getFollowedPlaylists() {
         return followedPlaylists;
@@ -339,7 +370,21 @@ public class User {
         this.connectionStatus = connectionStatus;
     }
 
-    public final void setPage(final Page page) {
-        this.page = page;
+    public final void setCurrentPageLocator(final PageLocator currentPageLocator) {
+        this.currentPageLocator = currentPageLocator;
     }
+    public void setCurrentPage(Page currentPage) {
+        this.currentPage = currentPage;
+    }
+
+
+    public final void setInteracting(final boolean interacting) {
+        isInteracting = interacting;
+    }
+
+    public CopyOnWriteArraySet<User> getUsersInteracting() {
+        return usersInteracting;
+    }
+
+
 }

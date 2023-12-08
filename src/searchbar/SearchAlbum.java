@@ -3,7 +3,7 @@ package searchbar;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;
-import media.Album;
+import media.music.Album;
 import user.User;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public final class SearchAlbum extends Search {
         }
         super.isSelected = true;
 
-        return "not implemented";
+        return "Successfully selected " + name + ".";
     }
 
     @Override

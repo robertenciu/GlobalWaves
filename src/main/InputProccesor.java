@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import command.Commands;
 import media.Library;
-import media.Playlist;
+import media.music.Playlist;
 import player.Player;
 import searchbar.Search;
 import stats.Statistics;
 import player.Status;
+import user.Artist;
+import user.Host;
 import user.User;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public final class InputProccesor {
         }
 
         // Getting current user
-        this.user = User.getUser(library, command);
+        this.user = User.getUser(library, command.getUsername());
         if (user != null) {
             this.search = user.getSearch();
             if (user.getStatus() == null) {
@@ -70,6 +72,7 @@ public final class InputProccesor {
 
         // Resetting status history
         status.reset();
+        user.setInteracting(false);
 
         // New search
         user.setSearch(Search.newSearch(command.getType(), library));
@@ -500,8 +503,24 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    public void deleteUser() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = Admin.deleteUser(command, library);
+        objectNode.put("message", message);
+    }
+
     public void showAlbums() {
-        ArrayNode result = Admin.showAlbums(command, library);
+        ArrayNode result = Admin.showAlbums((Artist) user);
+        objectNode.put("result", result);
+    }
+
+    public void showPodcasts() {
+        ArrayNode result = Admin.showPodcasts((Host) user);
         objectNode.put("result", result);
     }
 
@@ -537,13 +556,47 @@ public final class InputProccesor {
         String message = user.addMerch(command, library);
         objectNode.put("message", message);
     }
+
+    public void addPodcast() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.addPodcast(command, library);
+        objectNode.put("message", message);
+    }
+
+    public void addAnnouncement() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.addAnnouncement(command, library);
+        objectNode.put("message", message);
+    }
+
+    public void removeAnnouncement() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.removeAnnouncement(command, library);
+        objectNode.put("message", message);
+    }
+
     public void printCurrentPage() {
         if (user.getConnectionStatus().equals("Offline")) {
             objectNode.put("message", user.getUsername() + " is offline.");
             return;
         }
 
-        String message = user.printCurrentPage();
+        String message = user.printPage();
         objectNode.put("message", message);
     }
 }

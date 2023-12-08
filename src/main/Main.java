@@ -54,6 +54,8 @@ public final class Main {
             if (file.getName().startsWith("library")) {
                 continue;
             }
+//            if (++i < 6)
+//                continue;
 
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
@@ -61,7 +63,7 @@ public final class Main {
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (++i == 5)
+            if (++i == 6)
                 break;
         }
 
@@ -176,6 +178,15 @@ public final class Main {
                 case "addUser":
                     inputProccesor.addUser();
                     break;
+                case "deleteUser":
+                    inputProccesor.deleteUser();
+                    break;
+                case "showAlbums":
+                    inputProccesor.showAlbums();
+                    break;
+                case "showPodcasts":
+                    inputProccesor.showPodcasts();
+                    break;
                 case "addAlbum":
                     inputProccesor.addAlbum();
                     break;
@@ -185,8 +196,14 @@ public final class Main {
                 case "addMerch":
                     inputProccesor.addMerch();
                     break;
-                case "showAlbums":
-                    inputProccesor.showAlbums();
+                case "addPodcast":
+                    inputProccesor.addPodcast();
+                    break;
+                case "addAnnouncement":
+                    inputProccesor.addAnnouncement();
+                    break;
+                case "removeAnnouncement":
+                    inputProccesor.removeAnnouncement();
                     break;
                 case "printCurrentPage":
                     inputProccesor.printCurrentPage();

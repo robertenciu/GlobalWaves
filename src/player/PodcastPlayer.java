@@ -1,7 +1,7 @@
 package player;
 
-import media.Episode;
-import media.Podcast;
+import media.podcast.Episode;
+import media.podcast.Podcast;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class PodcastPlayer extends Player {

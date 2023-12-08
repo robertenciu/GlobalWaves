@@ -1,13 +1,13 @@
-package media;
+package media.content;
 
 import java.util.ArrayList;
 
 public final class Event {
-    private String owner;
+    private final String owner;
     private String name;
     private String date;
     private String description;
-    public Event(String owner) {
+    public Event(final String owner) {
         this.owner = owner;
     }
 
@@ -23,10 +23,6 @@ public final class Event {
 
     public String getOwner() {
         return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public String getName() {

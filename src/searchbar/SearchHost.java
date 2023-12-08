@@ -1,16 +1,16 @@
 package searchbar;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import command.Filters;
-import media.Album;
-import user.Artist;
 import user.Host;
-import user.Page;
+import user.PageLocator;
 import user.User;
 
 import java.util.ArrayList;
 
 public final class SearchHost extends Search {
+
     @Override
     public String select(final String name, final User user) {
         for (Host host : super.library.getHosts()) {
@@ -20,14 +20,29 @@ public final class SearchHost extends Search {
             }
         }
         super.isSelected = true;
-        user.setPage(Page.HOST);
+        user.setCurrentPageLocator(PageLocator.HOST);
+        user.setCurrentPage(selectedHost);
 
-        return "not implemented";
+        return "Successfully selected " + name + "'s page.";
     }
 
     @Override
     public ArrayNode getSearchResultArray(Filters filter, User user) {
-        return null;
+        ArrayList<Host> result = new ArrayList<>(super.library.getHosts());
+
+        if (filter.getName() != null) {
+            result = this.byUsername(result, filter.getName());
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode resultArray = objectMapper.createArrayNode();
+
+        resultsCount = Math.min(maxResultSize, result.size());
+        for (Host host : result.subList(0, resultsCount)) {
+            resultArray.add(host.getUsername());
+        }
+
+        return resultArray;
     }
 
     public ArrayList<Host> byUsername(final ArrayList<Host> hosts, final String name) {

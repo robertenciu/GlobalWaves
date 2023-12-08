@@ -2,6 +2,9 @@ package media.music;
 
 import fileio.input.LibraryInput;
 import fileio.input.SongInput;
+import media.Library;
+import user.Artist;
+import user.User;
 
 import java.util.ArrayList;
 
@@ -15,6 +18,7 @@ public final class Song {
     private Integer releaseYear;
     private String artist;
     private int likes;
+    private ArrayList<User> likedBy = new ArrayList<>();
 
     public Song() { }
 
@@ -27,6 +31,7 @@ public final class Song {
         this.genre = song.getGenre();
         this.releaseYear = song.getReleaseYear();
         this.artist = song.getArtist();
+        this.likedBy = new ArrayList<>();
     }
 
     /**
@@ -43,6 +48,27 @@ public final class Song {
             songs.add(song);
         }
         return songs;
+    }
+
+    public void updateInteracting(final User user,
+                                  final boolean isInteracting) {
+        Library library = Library.getInstance();
+        Artist songArtist = Artist.getArtist(library.getArtists(), this.artist);
+
+        if (songArtist != null) {
+            if (isInteracting) {
+                songArtist.setInteracting(true);
+                songArtist.getUsersInteracting().add(user);
+            } else {
+                songArtist.getUsersInteracting().remove(user);
+                if (songArtist.getUsersInteracting().isEmpty()) {
+                    songArtist.setInteracting(false);
+                }
+            }
+        }
+    }
+    public ArrayList<User> getLikedBy() {
+        return likedBy;
     }
 
     public void setReleaseYear(final Integer releaseYear) {
