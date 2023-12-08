@@ -4,8 +4,8 @@ import media.music.Playlist;
 import media.music.Song;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public final class SongPlayer extends Player {
-    private Song loadedSong;
+public class SongPlayer extends Player {
+    protected Song loadedSong;
     public SongPlayer() { }
     public SongPlayer(final Song song) {
         this.loadedSong = song;
@@ -114,5 +114,9 @@ public final class SongPlayer extends Player {
             default:
                 break;
         }
+    }
+
+    public Song getLoadedSong() {
+        return loadedSong;
     }
 }

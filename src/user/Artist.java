@@ -8,6 +8,8 @@ import media.music.Album;
 import media.music.MusicCollection;
 import media.music.Playlist;
 import media.music.Song;
+import player.PlaylistPlayer;
+import player.SongPlayer;
 
 import java.util.ArrayList;
 
@@ -104,6 +106,28 @@ public final class Artist extends User implements Page {
 
         return true;
     }
+
+    public String removeAlbum(Commands command) {
+        Album album = Album.getAlbum(albums, command.getName());
+
+        if (album == null) {
+            return this.username + " doesn't have an album with the given name.";
+        }
+
+        Library library = Library.getInstance();
+        for (User user : library.getUsers()) {
+            if (user.getPlayer() != null) {
+                user.getPlayer().updateStatus(command.getTimestamp());
+                Song loadedSong = user.getPlayer().getLoadedSong();
+                if (loadedSong != null && album.getSongs().contains(loadedSong)) {
+                    return this.username + " can't delete this album.";
+                }
+            }
+        }
+
+        return this.username + " deleted the album successfully.";
+    }
+
     private boolean hasDuplicateSongs(final ArrayList<Song> songs) {
         for (int i = 0; i < songs.size() - 1; i++) {
             for (int j = i + 1; j < songs.size(); j++) {
@@ -116,7 +140,7 @@ public final class Artist extends User implements Page {
     }
     @Override
     public String addAlbum(final Commands command, final Library library) {
-        if (Album.exists(albums, command.getName())) {
+        if (Album.getAlbum(albums, command.getName()) != null) {
             return super.getUsername() + " has another album with the same name.";
         }
 

@@ -1,6 +1,7 @@
 package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import media.music.Song;
 import user.User;
 import searchbar.Search;
 
@@ -145,6 +146,9 @@ public abstract class Player implements PlayerCommands {
 
     public final void setUser(final User user) {
         this.user = user;
+    }
+    public Song getLoadedSong() {
+        return null;
     }
 
 }

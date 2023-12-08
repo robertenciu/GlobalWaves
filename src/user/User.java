@@ -217,6 +217,19 @@ public class User implements Page {
 
         return this.username + " has changed status successfully.";
     }
+
+    public final String changePage(Commands command) {
+        if (command.getNextPage().equals("Home")) {
+            currentPageLocator = PageLocator.HOME;
+        } else if (command.getNextPage().equals("LikedContent")){
+            currentPageLocator = PageLocator.LIKED_CONTENT;
+        } else {
+            return this.username + " is trying to access a non-existent page.";
+        }
+
+        return this.username + " accessed " + command.getNextPage() + " successfully.";
+    }
+
     private String printHome() {
         StringBuilder result = new StringBuilder("Liked songs:\n\t[");
 
@@ -265,7 +278,31 @@ public class User implements Page {
     }
 
     private String printLikedContent() {
-        return null;
+        StringBuilder result = new StringBuilder("Liked songs:\n\t[");
+
+        for (Song song : likedSongs) {
+            result.append(song.getName()).append(" - ");
+            result.append(song.getArtist()).append(", ");
+        }
+        if (!likedSongs.isEmpty()) {
+            result.deleteCharAt(result.length() - 1);
+            result.deleteCharAt(result.length() - 1);
+        }
+
+        result.append("]\n\nFollowed playlists:\n\t[");
+
+        for (Playlist playlist : followedPlaylists) {
+            result.append(playlist.getName()).append(" - ");
+            result.append(playlist.getOwner()).append(", ");
+        }
+        if (!followedPlaylists.isEmpty()) {
+            result.deleteCharAt(result.length() - 1);
+            result.deleteCharAt(result.length() - 1);
+        }
+
+        result.append("]");
+
+        return result.toString();
     }
 
     @Override
@@ -281,6 +318,9 @@ public class User implements Page {
     }
 
     public String addAlbum(final Commands command, final Library library) {
+        return this.username + " is not an artist.";
+    }
+    public String removeAlbum(final Commands command) {
         return this.username + " is not an artist.";
     }
     public String addEvent(final Commands command, final Library library) {

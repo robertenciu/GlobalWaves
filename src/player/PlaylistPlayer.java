@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import media.music.MusicCollection;
 import media.music.Song;
 
-public class PlaylistPlayer extends Player {
-    protected MusicCollection loadedPlaylist;
-    protected Song loadedSong;
+public class PlaylistPlayer extends SongPlayer {
+    private MusicCollection loadedPlaylist;
     private boolean reachedPlaylistEnd;
     public PlaylistPlayer() {
     }

@@ -9,14 +9,14 @@ public final class Album extends MusicCollection {
         super.owner = owner;
         super.type = MusicCollectionType.ALBUM;
     }
-    public static boolean exists(final ArrayList<Album> albums, final String name) {
+    public static Album getAlbum(final ArrayList<Album> albums, final String name) {
         for (Album album : albums) {
             if (album.getName().equals(name)) {
-                return true;
+                return album;
             }
         }
 
-        return false;
+        return null;
     }
 
     public int getReleaseYear() {

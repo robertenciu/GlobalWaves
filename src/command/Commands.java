@@ -16,6 +16,7 @@ public final class Commands {
     private int age;
     private String city;
     private String description;
+    private String nextPage;
     private Integer timestamp;
     private Integer itemNumber;
     private String type;
@@ -28,6 +29,14 @@ public final class Commands {
 
     public ArrayList<Episode> getEpisodes() {
         return episodes;
+    }
+
+    public String getNextPage() {
+        return nextPage;
+    }
+
+    public void setNextPage(String nextPage) {
+        this.nextPage = nextPage;
     }
 
     public void setEpisodes(final ArrayList<Episode> episodes) {

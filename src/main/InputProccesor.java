@@ -535,6 +535,17 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    public void removeAlbum() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.removeAlbum(command);
+        objectNode.put("message", message);
+    }
+
     public void addEvent() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -599,4 +610,15 @@ public final class InputProccesor {
         String message = user.printPage();
         objectNode.put("message", message);
     }
+
+    public void changePage() {
+        if (user.getConnectionStatus().equals("Offline")) {
+            objectNode.put("message", user.getUsername() + " is offline.");
+            return;
+        }
+
+        String message = user.changePage(command);
+        objectNode.put("message", message);
+    }
+
 }
