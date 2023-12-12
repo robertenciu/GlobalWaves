@@ -17,6 +17,12 @@ public final class Episode {
         this.initialDuration = episode.getDuration();
     }
 
+    public Episode(final Episode episode) {
+        this.name = episode.name;
+        this.duration = episode.duration;
+        this.initialDuration = episode.initialDuration;
+        this.description = episode.description;
+    }
     public Integer getInitialDuration() {
         return initialDuration;
     }

@@ -22,8 +22,6 @@ public class User implements Page {
     protected String username;
     protected int age;
     protected String city;
-    protected CopyOnWriteArraySet<User> usersInteracting = new CopyOnWriteArraySet<>();
-    protected boolean isInteracting;
     private final ArrayList<Song> likedSongs;
     private final ArrayList<Playlist> playlists;
     private final HashMap<String, Episode> lastEpisodes;
@@ -103,14 +101,36 @@ public class User implements Page {
     }
 
     public boolean removeCurrentUser(Library library) {
-        if (this.isInteracting) {
-            return false;
+        for (User user : library.getUsers()) {
+            if (user.getPlayer() != null) {
+                MusicCollection musicCollection = user.getPlayer().getLoadedPlaylist();
+                if (musicCollection == null) {
+                    continue;
+                }
+                if (musicCollection.getOwner().equals(this.username)) {
+                    return false;
+                }
+            }
+        }
+
+        for (User user : library.getUsers()) {
+            user.getFollowedPlaylists().removeIf(playlist -> playlist.getOwner().equals(this.username));
+        }
+
+        for (Playlist playlist : library.getPlaylists()) {
+            for (int i = 0; i < playlist.getFollowedBy().size(); i++) {
+                if (playlist.getFollowedBy().get(i).equals(this)) {
+                    playlist.setFollowers(playlist.getFollowers() - 1);
+                    playlist.getFollowedBy().remove(this);
+                }
+            }
+        }
+
+        for (Playlist playlist : playlists) {
+            library.getSongs().removeAll(playlist.getSongs());
         }
 
         library.getUsers().remove(this);
-        for (MusicCollection musicCollection : playlists) {
-            library.getSongs().removeAll(musicCollection.getSongs());
-        }
         library.getPlaylists().removeAll(this.playlists);
         this.search = null;
         this.player = null;
@@ -205,13 +225,16 @@ public class User implements Page {
         }
     }
 
-    public final String switchConnectionStatus(Integer timestamp) {
+    public String switchConnectionStatus(Integer timestamp) {
         if (this.connectionStatus.equals("Online")) {
             if (player != null && player.isLoaded()) {
                 player.updateStatus(timestamp);
             }
             this.connectionStatus = "Offline";
         } else {
+            if (player != null && player.isLoaded()) {
+                player.setTimeUpdated(timestamp);
+            }
             this.connectionStatus = "Online";
         }
 
@@ -227,6 +250,7 @@ public class User implements Page {
             return this.username + " is trying to access a non-existent page.";
         }
 
+        currentPage = this;
         return this.username + " accessed " + command.getNextPage() + " successfully.";
     }
 
@@ -326,10 +350,16 @@ public class User implements Page {
     public String addEvent(final Commands command, final Library library) {
         return this.username + " is not an artist.";
     }
+    public String removeEvent(final Commands command, final Library library) {
+        return this.username + " is not an artist.";
+    }
     public String addMerch(final Commands command, final Library library) {
         return this.username + " is not an artist.";
     }
     public String addPodcast(final Commands command, final Library library) {
+        return this.username + " is not a host.";
+    }
+    public String removePodcast(Commands command, Library library) {
         return this.username + " is not a host.";
     }
     public String addAnnouncement(final Commands command, final Library library) {
@@ -417,14 +447,7 @@ public class User implements Page {
         this.currentPage = currentPage;
     }
 
-
-    public final void setInteracting(final boolean interacting) {
-        isInteracting = interacting;
+    public Page getCurrentPage() {
+        return currentPage;
     }
-
-    public CopyOnWriteArraySet<User> getUsersInteracting() {
-        return usersInteracting;
-    }
-
-
 }

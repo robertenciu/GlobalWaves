@@ -46,8 +46,6 @@ public class SongPlayer extends Player {
 
     @Override
     public void load(final Integer timestamp) {
-        loadedSong.updateInteracting(user, true);
-
         status.setRemainedTime(loadedSong.getDuration());
         status.setName(loadedSong.getName());
         status.setPaused(false);
@@ -58,7 +56,6 @@ public class SongPlayer extends Player {
 
     private void handleNoRepeat() {
         status.reset();
-        loadedSong.updateInteracting(user, false);
         loadedSong = null;
         super.isLoaded = false;
     }

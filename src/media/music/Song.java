@@ -50,23 +50,6 @@ public final class Song {
         return songs;
     }
 
-    public void updateInteracting(final User user,
-                                  final boolean isInteracting) {
-        Library library = Library.getInstance();
-        Artist songArtist = Artist.getArtist(library.getArtists(), this.artist);
-
-        if (songArtist != null) {
-            if (isInteracting) {
-                songArtist.setInteracting(true);
-                songArtist.getUsersInteracting().add(user);
-            } else {
-                songArtist.getUsersInteracting().remove(user);
-                if (songArtist.getUsersInteracting().isEmpty()) {
-                    songArtist.setInteracting(false);
-                }
-            }
-        }
-    }
     public ArrayList<User> getLikedBy() {
         return likedBy;
     }

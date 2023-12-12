@@ -11,14 +11,14 @@ public final class Event {
         this.owner = owner;
     }
 
-    public static boolean exists(final ArrayList<Event> events, final String name) {
+    public static Event getEvent(final ArrayList<Event> events, final String name) {
         for (Event event : events) {
             if (event.getName().equals(name)) {
-                return true;
+                return event;
             }
         }
 
-        return false;
+        return null;
     }
 
     public String getOwner() {

@@ -48,20 +48,18 @@ public final class Main {
             resultFile.delete();
         }
 
-        int i = 0;
         Files.createDirectories(path);
         for (File file : Objects.requireNonNull(directory.listFiles())) {
             if (file.getName().startsWith("library")) {
                 continue;
             }
+
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
             boolean isCreated = out.createNewFile();
             if (isCreated) {
                 action(file.getName(), filepath);
             }
-            if (++i == 7)
-                break;
         }
 
         Checker.calculateScore();
@@ -166,6 +164,12 @@ public final class Main {
                 case "getTop5Playlists":
                     inputProccesor.getTop5Playlists();
                     break;
+                case "getTop5Artists":
+                    inputProccesor.getTop5Artists();
+                    break;
+                case "getTop5Albums":
+                    inputProccesor.getTop5Albums();
+                    break;
                 case "getOnlineUsers":
                     inputProccesor.getOnlineUsers();
                     break;
@@ -193,11 +197,17 @@ public final class Main {
                 case "addEvent":
                     inputProccesor.addEvent();
                     break;
+                case "removeEvent":
+                    inputProccesor.removeEvent();
+                    break;
                 case "addMerch":
                     inputProccesor.addMerch();
                     break;
                 case "addPodcast":
                     inputProccesor.addPodcast();
+                    break;
+                case "removePodcast":
+                    inputProccesor.removePodcast();
                     break;
                 case "addAnnouncement":
                     inputProccesor.addAnnouncement();

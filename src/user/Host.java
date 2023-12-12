@@ -3,6 +3,7 @@ package user;
 import command.Commands;
 import media.Library;
 import media.content.Announcement;
+import media.music.Playlist;
 import media.podcast.Episode;
 import media.podcast.Podcast;
 
@@ -72,9 +73,35 @@ public final class Host extends User implements Page {
         }
         return false;
     }
+
+    @Override
+    public boolean removeCurrentUser(Library library) {
+        for (User user : library.getUsers()) {
+            if (user.getCurrentPage().equals(this)) {
+                return false;
+            }
+            if (user.getPlayer() != null) {
+                Podcast podcast = user.getPlayer().getLoadedPodcast();
+                if (podcast == null) {
+                    continue;
+                }
+                if (podcasts.contains(podcast)) {
+                    return false;
+                }
+            }
+        }
+
+        library.getPodcasts().removeAll(this.podcasts);
+        library.getAnnouncements().removeAll(this.announcements);
+        this.podcasts.clear();
+        this.announcements.clear();
+
+        return true;
+    }
+
     @Override
     public String addPodcast(final Commands command, final Library library) {
-        if (Podcast.exists(podcasts, command.getName())) {
+        if (Podcast.getPodcast(podcasts, command.getName()) != null) {
             return this.username + " has another podcast with the same name.";
         }
 
@@ -125,6 +152,34 @@ public final class Host extends User implements Page {
         return this.username + " has successfully deleted the announcement.";
     }
 
+    @Override
+    public String removePodcast(final Commands command, final Library library) {
+        Podcast podcast = Podcast.getPodcast(library.getPodcasts(), command.getName());
+
+        if (podcast == null) {
+            return this.username + " doesn't have a podcast with the given name.";
+        }
+
+        for (User user : library.getUsers()) {
+            if (user.getPlayer() != null) {
+                user.getPlayer().updateStatus(command.getTimestamp());
+                Podcast loadedPodcast = user.getPlayer().getLoadedPodcast();
+                if (podcast.equals(loadedPodcast)) {
+                    return this.username + " can't delete this podcast.";
+                }
+            }
+        }
+
+        library.getPodcasts().remove(podcast);
+        this.podcasts.remove(podcast);
+
+        return this.username + " deleted the podcast successfully.";
+    }
+
+    @Override
+    public String switchConnectionStatus(Integer timestamp) {
+        return this.username + " is not a normal user.";
+    }
     public ArrayList<Podcast> getPodcasts() {
         return podcasts;
     }

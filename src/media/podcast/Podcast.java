@@ -24,6 +24,16 @@ public final class Podcast {
         }
     }
 
+    public Podcast(final Podcast podcast) {
+        this.owner = podcast.owner;
+        this.episodes = new ArrayList<>();
+        for (Episode episode : podcast.episodes) {
+            Episode copyEpisode = new Episode(episode);
+            this.episodes.add(copyEpisode);
+        }
+        this.name = podcast.name;
+    }
+
     /**
      * This is a method that returns a copy of the input podcasts,
      * in order to perform additional processing.
@@ -40,14 +50,14 @@ public final class Podcast {
         return podcasts;
     }
 
-    public static boolean exists(final ArrayList<Podcast> podcasts, final String name) {
+    public static Podcast getPodcast(final ArrayList<Podcast> podcasts, final String name) {
         for (Podcast podcast : podcasts) {
             if (podcast.getName().equals(name)) {
-                return true;
+                return podcast;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

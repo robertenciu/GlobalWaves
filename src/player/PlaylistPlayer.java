@@ -1,8 +1,7 @@
 package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import media.music.MusicCollection;
-import media.music.Song;
+import media.music.*;
 
 public class PlaylistPlayer extends SongPlayer {
     private MusicCollection loadedPlaylist;
@@ -16,7 +15,6 @@ public class PlaylistPlayer extends SongPlayer {
     @Override
     public final void load(final Integer timestamp) {
         loadedSong = loadedPlaylist.firstSong();
-        loadedSong.updateInteracting(user, true);
         super.isLoaded = true;
 
         status.setRemainedTime(loadedSong.getDuration());
@@ -36,8 +34,6 @@ public class PlaylistPlayer extends SongPlayer {
         int timeRemaining = timeElapsed;
         Song nextSong;
 
-        loadedSong.updateInteracting(user, false);
-
         do {
             timeRemaining = timeRemaining - status.getRemainedTime();
             nextSong = loadedPlaylist.nextSong(loadedSong);
@@ -55,14 +51,15 @@ public class PlaylistPlayer extends SongPlayer {
 
         status.setRemainedTime(loadedSong.getDuration() - timeRemaining);
         status.setName(loadedSong.getName());
-
-        loadedSong.updateInteracting(user, true);
     }
 
     private void handleNoRepeat() {
+        if (status.isShuffle()) {
+            loadedPlaylist.unshuffleSongs();
+        }
         status.reset();
-        loadedSong.updateInteracting(user, false);
         loadedSong = null;
+        loadedPlaylist = null;
         super.isLoaded = false;
     }
 
@@ -99,7 +96,7 @@ public class PlaylistPlayer extends SongPlayer {
     }
 
     private void checkReachedPlaylistEnd() {
-        if (loadedSong == loadedPlaylist.lastSong()) {
+        if (loadedPlaylist == null || loadedSong == loadedPlaylist.lastSong()) {
             reachedPlaylistEnd = true;
         }
     }
@@ -146,9 +143,7 @@ public class PlaylistPlayer extends SongPlayer {
                     break;
                 }
             case "Repeat All":
-                loadedSong.updateInteracting(user, false);
                 loadedSong = nextSong;
-                loadedSong.updateInteracting(user, true);
             case "Repeat Current Song":
                 status.setRemainedTime(loadedSong.getDuration());
                 status.setName(loadedSong.getName());
@@ -187,9 +182,7 @@ public class PlaylistPlayer extends SongPlayer {
             status.setRemainedTime(prev.getDuration());
             status.setName(prev.getName());
 
-            loadedSong.updateInteracting(user, false);
             loadedSong = prev;
-            loadedSong.updateInteracting(user, true);
         }
 
         super.timeUpdated = timestamp;
@@ -198,5 +191,9 @@ public class PlaylistPlayer extends SongPlayer {
         obj.put("message",
                 "Returned to previous track successfully. The current track is "
                         + status.getName() + ".");
+    }
+
+    public MusicCollection getLoadedPlaylist() {
+        return loadedPlaylist;
     }
 }

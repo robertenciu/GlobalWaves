@@ -8,6 +8,7 @@ import media.music.Album;
 import media.music.MusicCollection;
 import media.music.Playlist;
 import media.music.Song;
+import player.Player;
 import player.PlaylistPlayer;
 import player.SongPlayer;
 
@@ -80,12 +81,23 @@ public final class Artist extends User implements Page {
         return null;
     }
 
+    @Override
     public boolean removeCurrentUser(Library library) {
-        if (isInteracting) {
-            return false;
+        for (User user : library.getUsers()) {
+            if (user.getCurrentPage().equals(this)) {
+                return false;
+            }
+            if (user.getPlayer() != null) {
+                Song song = user.getPlayer().getLoadedSong();
+                if (song == null) {
+                    continue;
+                }
+                if (song.getArtist().equals(this.getUsername())) {
+                    return false;
+                }
+            }
         }
 
-        library.getArtists().remove(this);
         for (MusicCollection musicCollection : albums) {
             for (Song song : musicCollection.getSongs()) {
                 for (User user : song.getLikedBy()) {
@@ -97,6 +109,8 @@ public final class Artist extends User implements Page {
             }
             library.getSongs().removeAll(musicCollection.getSongs());
         }
+
+        library.getArtists().remove(this);
         library.getAlbums().removeAll(this.albums);
         library.getMerches().removeAll(this.merches);
         library.getEvents().removeAll(this.events);
@@ -121,6 +135,16 @@ public final class Artist extends User implements Page {
                 Song loadedSong = user.getPlayer().getLoadedSong();
                 if (loadedSong != null && album.getSongs().contains(loadedSong)) {
                     return this.username + " can't delete this album.";
+                }
+
+                MusicCollection loadedPlaylist = user.getPlayer().getLoadedPlaylist();
+                if (loadedPlaylist == null) {
+                    continue;
+                }
+                for (Song song : loadedPlaylist.getSongs()) {
+                    if (album.getSongs().contains(song)) {
+                        return this.username + " can't delete this album.";
+                    }
                 }
             }
         }
@@ -194,7 +218,7 @@ public final class Artist extends User implements Page {
 
     @Override
     public String addEvent(final Commands command, final Library library) {
-        if (Event.exists(events, command.getName())) {
+        if (Event.getEvent(events, command.getName()) != null) {
             return super.getUsername() + " has another event with the same name.";
         }
 
@@ -210,6 +234,19 @@ public final class Artist extends User implements Page {
         library.getEvents().add(newEvent);
         this.events.add(newEvent);
         return super.getUsername() + " has added new event successfully.";
+    }
+
+    public String removeEvent(final Commands command, final Library library) {
+        Event event = Event.getEvent(library.getEvents(), command.getName());
+
+        if (event == null) {
+            return this.username + " doesn't have an event with the given name.";
+        }
+
+        library.getEvents().remove(event);
+        this.events.remove(event);
+
+        return this.username + " deleted the event successfully.";
     }
 
     private boolean isPriceValid(final Commands command) {
@@ -236,6 +273,10 @@ public final class Artist extends User implements Page {
         return super.getUsername() + " has added new merchandise successfully.";
     }
 
+    @Override
+    public String switchConnectionStatus(Integer timestamp) {
+        return this.username + " is not a normal user.";
+    }
     public ArrayList<Album> getAlbums() {
         return albums;
     }

@@ -15,6 +15,16 @@ public abstract class MusicCollection {
     protected ArrayList<Song> originalOrder;
     protected MusicCollectionType type;
 
+    public MusicCollection() { }
+
+    public MusicCollection(MusicCollection other) {
+        this.owner = other.owner;
+        this.name = other.name;
+        this.songs = new ArrayList<>(other.songs);
+        this.originalOrder = other.originalOrder;
+        this.type = other.type;
+    }
+
     /**
      * Shuffling the playlist's songs based on a seed.
      * Retaining a copy of the original order in order to reverse.

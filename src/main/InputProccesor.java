@@ -72,7 +72,6 @@ public final class InputProccesor {
 
         // Resetting status history
         status.reset();
-        user.setInteracting(false);
 
         // New search
         user.setSearch(Search.newSearch(command.getType(), library));
@@ -149,6 +148,8 @@ public final class InputProccesor {
             objectNode.put("message", user.getUsername() + " is offline.");
             return;
         }
+
+        player.updateStatus(command.getTimestamp());
 
         if (player == null || !player.isLoaded()) {
             objectNode.put("message",
@@ -464,6 +465,24 @@ public final class InputProccesor {
         }
     }
 
+    public void getTop5Albums() {
+        Statistics statistic = Statistics.getInstance();
+        ArrayNode result = objectNode.putArray("result");
+        ArrayList<String> top5Albums = statistic.getTop5Albums();
+        for (String album : top5Albums) {
+            result.add(album);
+        }
+    }
+
+    public void getTop5Artists() {
+        Statistics statistic = Statistics.getInstance();
+        ArrayNode result = objectNode.putArray("result");
+        ArrayList<String> top5Artists = statistic.getTop5Artists();
+        for (String album : top5Artists) {
+            result.add(album);
+        }
+    }
+
     public void getOnlineUsers() {
         Statistics statistic = Statistics.getInstance();
         ArrayNode result = objectNode.putArray("result");
@@ -510,7 +529,9 @@ public final class InputProccesor {
             return;
         }
 
-        String message = Admin.deleteUser(command, library);
+        Admin.updatePlayers(command, library);
+
+        String message = Admin.deleteUser(user, library);
         objectNode.put("message", message);
     }
 
@@ -557,6 +578,18 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    public void removeEvent() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.removeEvent(command, library);
+        objectNode.put("message", message);
+    }
+
+
     public void addMerch() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -576,6 +609,17 @@ public final class InputProccesor {
         }
 
         String message = user.addPodcast(command, library);
+        objectNode.put("message", message);
+    }
+
+    public void removePodcast() {
+        if (user == null) {
+            objectNode.put("message", "The username " + command.getUsername()
+                    + " doesn't exist.");
+            return;
+        }
+
+        String message = user.removePodcast(command, library);
         objectNode.put("message", message);
     }
 

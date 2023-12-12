@@ -48,19 +48,20 @@ public final class Admin {
         return "The username " + command.getUsername() + " has been added successfully.";
     }
 
-    public static String deleteUser(final Commands command, final Library library) {
-        User user = User.getUser(library, command.getUsername());
-        for (User interact : user.getUsersInteracting()) {
-            if (interact.getPlayer() != null) {
-                interact.getPlayer().updateStatus(command.getTimestamp());
+    public static void updatePlayers(final Commands command, final Library library) {
+        for (User user : library.getUsers()) {
+            if (user.getPlayer() != null) {
+                user.getPlayer().updateStatus(command.getTimestamp());
             }
         }
+    }
 
+    public static String deleteUser(final User user, final Library library) {
         if (user.removeCurrentUser(library)) {
-            return command.getUsername() + " was successfully deleted.";
+            return user.getUsername() + " was successfully deleted.";
         }
 
-        return command.getUsername() + " can't be deleted.";
+        return user.getUsername() + " can't be deleted.";
     }
 
     public static ArrayNode showAlbums(final Artist artist) {

@@ -1,7 +1,11 @@
 package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import media.music.Album;
+import media.music.MusicCollection;
+import media.music.Playlist;
 import media.music.Song;
+import media.podcast.Podcast;
 import user.User;
 import searchbar.Search;
 
@@ -31,10 +35,10 @@ public abstract class Player implements PlayerCommands {
             player = new PodcastPlayer(search.getSelectedPodcast());
         }
         if (search.getType().equals("playlist")) {
-            player = new PlaylistPlayer(search.getSelectedPlaylist());
+            player = new PlaylistPlayer(new Playlist(search.getSelectedPlaylist()));
         }
         if (search.getType().equals("album")) {
-            player = new AlbumPlayer(search.getSelectedAlbum());
+            player = new AlbumPlayer(new Album(search.getSelectedAlbum()));
         }
         if (player != null) {
             player.setStatus(status);
@@ -87,7 +91,7 @@ public abstract class Player implements PlayerCommands {
      */
     public void shuffle(final ObjectNode obj, final long seed) {
         // Default
-        obj.put("message", "The loaded source is not a playlist.");
+        obj.put("message", "The loaded source is not a playlist or an album.");
     }
 
     /**
@@ -144,11 +148,19 @@ public abstract class Player implements PlayerCommands {
         isLoaded = loaded;
     }
 
+    public void setTimeUpdated(Integer timeUpdated) {
+        this.timeUpdated = timeUpdated;
+    }
+
     public final void setUser(final User user) {
         this.user = user;
     }
     public Song getLoadedSong() {
         return null;
     }
+    public Podcast getLoadedPodcast() {
+        return null;
+    }
+    public MusicCollection getLoadedPlaylist() {return null;}
 
 }

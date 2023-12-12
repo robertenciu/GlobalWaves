@@ -9,6 +9,13 @@ public final class Album extends MusicCollection {
         super.owner = owner;
         super.type = MusicCollectionType.ALBUM;
     }
+
+    public Album (final Album album) {
+        super(album);
+        this.description = album.description;
+        this.releaseYear = album.releaseYear;
+    }
+
     public static Album getAlbum(final ArrayList<Album> albums, final String name) {
         for (Album album : albums) {
             if (album.getName().equals(name)) {

@@ -1,18 +1,14 @@
 package media.music;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import media.Library;
-import user.Artist;
 import user.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-
 public class Playlist extends MusicCollection {
     private int followers;
     private final Integer playlistId;
     private String visibility;
+    private ArrayList<User> followedBy = new ArrayList<>();
     public Playlist(final String name, final int id, final String owner) {
         this.visibility = "public";
         this.playlistId = id;
@@ -21,6 +17,13 @@ public class Playlist extends MusicCollection {
         super.name = name;
         super.owner = owner;
         super.type = MusicCollectionType.PLAYLIST;
+    }
+    public Playlist(final Playlist playlist) {
+        super(playlist);
+        this.followedBy = playlist.followedBy;
+        this.playlistId = playlist.playlistId;
+        this.followers = playlist.followers;
+        this.visibility = playlist.visibility;
     }
 
     /**
@@ -61,10 +64,12 @@ public class Playlist extends MusicCollection {
         if (user.getFollowedPlaylists().contains(playlist)) {
             user.getFollowedPlaylists().remove(playlist);
             playlist.setFollowers(playlist.getFollowers() - 1);
+            playlist.getFollowedBy().remove(user);
             objectNode.put("message", "Playlist unfollowed successfully.");
         } else {
             user.getFollowedPlaylists().add(playlist);
             playlist.setFollowers(playlist.getFollowers() + 1);
+            playlist.getFollowedBy().add(user);
             objectNode.put("message", "Playlist followed successfully.");
         }
     }
@@ -89,4 +94,7 @@ public class Playlist extends MusicCollection {
         return this.playlistId;
     }
 
+    public ArrayList<User> getFollowedBy() {
+        return followedBy;
+    }
 }

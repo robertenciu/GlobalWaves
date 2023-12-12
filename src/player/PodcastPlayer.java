@@ -5,7 +5,7 @@ import media.podcast.Podcast;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class PodcastPlayer extends Player {
-    private final Podcast loadedPodcast;
+    private Podcast loadedPodcast;
     private Episode loadedEpisode;
     public PodcastPlayer(final Podcast podcast) {
         this.loadedPodcast = podcast;
@@ -122,6 +122,7 @@ public final class PodcastPlayer extends Player {
         status.reset();
         loadedEpisode.setDuration(loadedEpisode.getInitialDuration());
         loadedEpisode = null;
+        loadedPodcast = null;
         super.isLoaded = false;
     }
     @Override
@@ -170,4 +171,8 @@ public final class PodcastPlayer extends Player {
         new SongPlayer().repeat();
     }
 
+    @Override
+    public Podcast getLoadedPodcast() {
+        return loadedPodcast;
+    }
 }
