@@ -3,7 +3,7 @@ package searchbar;
 import media.music.Song;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import command.Filters;
+import fileio.input.FiltersInput;
 import user.User;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public final class SearchSong extends Search {
         return "Successfully selected " + name + ".";
     }
     @Override
-    public ArrayNode getSearchResultArray(final Filters filter, final User user) {
+    public ArrayNode getSearchResultArray(final FiltersInput filter, final User user) {
         ArrayList<Song> result = new ArrayList<>(super.library.getSongs());
 
         if (filter.getTags() != null) {

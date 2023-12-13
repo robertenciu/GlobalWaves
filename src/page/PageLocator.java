@@ -1,4 +1,4 @@
-package user;
+package page;
 
 public enum PageLocator {
     HOME,

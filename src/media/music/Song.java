@@ -2,8 +2,6 @@ package media.music;
 
 import fileio.input.LibraryInput;
 import fileio.input.SongInput;
-import media.Library;
-import user.Artist;
 import user.User;
 
 import java.util.ArrayList;

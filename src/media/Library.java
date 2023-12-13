@@ -25,18 +25,6 @@ public final class Library {
     private final ArrayList<Event> events;
     private final ArrayList<Merch> merches;
     private final ArrayList<Announcement> announcements;
-    private static Library instance = null;
-
-    /**
-     * SINGLETON PATTERN CLASS.
-     * This method returns the instance of the class and creates one if it doesn't exist.
-     *
-     * @return The instance of the class.
-     */
-    public static Library getInstance() {
-        return instance;
-    }
-
     public Library(final LibraryInput libraryInput) {
         this.songs = Song.copySongs(libraryInput);
         this.podcasts = Podcast.copyPodcasts(libraryInput);
@@ -48,7 +36,6 @@ public final class Library {
         this.events = new ArrayList<>();
         this.merches = new ArrayList<>();
         this.announcements = new ArrayList<>();
-        instance = this;
     }
 
     public ArrayList<Announcement> getAnnouncements() {

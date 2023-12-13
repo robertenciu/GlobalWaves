@@ -12,7 +12,7 @@ public class SongPlayer extends Player {
     }
 
     @Override
-    public void addRemoveInPlaylist(final Integer playlistId, final ObjectNode obj) {
+    public final void addRemoveInPlaylist(final Integer playlistId, final ObjectNode obj) {
         Playlist playlist = user.getPlaylist(playlistId);
         if (playlist == null) {
             obj.put("message", "The specified playlist does not exist.");
@@ -30,7 +30,7 @@ public class SongPlayer extends Player {
     }
 
     @Override
-    public void like(final ObjectNode obj) {
+    public final void like(final ObjectNode obj) {
         if (user.getLikedSongs().contains(loadedSong)) {
             obj.put("message", "Unlike registered successfully.");
             user.getLikedSongs().remove(loadedSong);
@@ -44,6 +44,11 @@ public class SongPlayer extends Player {
         }
     }
 
+    /**
+     * This method loads a file in the player.
+     *
+     * @param timestamp The current timestamp.
+     */
     @Override
     public void load(final Integer timestamp) {
         status.setRemainedTime(loadedSong.getDuration());
@@ -60,6 +65,11 @@ public class SongPlayer extends Player {
         super.isLoaded = false;
     }
 
+    /**
+     * Method for updating the status at a current timestamp.
+     *
+     * @param timestamp The timestamp.
+     */
     @Override
     public void updateStatus(final Integer timestamp) {
         if (status.isPaused() || user.getConnectionStatus().equals("Offline")) {
@@ -96,6 +106,9 @@ public class SongPlayer extends Player {
         super.timeUpdated = timestamp;
     }
 
+    /**
+     * Method for updating the repeat status.
+     */
     @Override
     public void repeat() {
         switch (status.getRepeat()) {
@@ -113,6 +126,9 @@ public class SongPlayer extends Player {
         }
     }
 
+    /**
+     * @return The loaded song.
+     */
     public Song getLoadedSong() {
         return loadedSong;
     }

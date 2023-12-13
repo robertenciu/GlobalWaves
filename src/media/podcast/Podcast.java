@@ -50,6 +50,13 @@ public final class Podcast {
         return podcasts;
     }
 
+    /**
+     * This method searches a podcast by a given name.
+     *
+     * @param podcasts The list of the podcasts.
+     * @param name The specific name.
+     * @return The podcast.
+     */
     public static Podcast getPodcast(final ArrayList<Podcast> podcasts, final String name) {
         for (Podcast podcast : podcasts) {
             if (podcast.getName().equals(name)) {

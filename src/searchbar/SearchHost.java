@@ -2,9 +2,9 @@ package searchbar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import command.Filters;
+import fileio.input.FiltersInput;
 import user.Host;
-import user.PageLocator;
+import page.PageLocator;
 import user.User;
 
 import java.util.ArrayList;
@@ -27,7 +27,8 @@ public final class SearchHost extends Search {
     }
 
     @Override
-    public ArrayNode getSearchResultArray(Filters filter, User user) {
+    public ArrayNode getSearchResultArray(final FiltersInput filter,
+                                          final User user2) {
         ArrayList<Host> result = new ArrayList<>(super.library.getHosts());
 
         if (filter.getName() != null) {
@@ -45,7 +46,7 @@ public final class SearchHost extends Search {
         return resultArray;
     }
 
-    public ArrayList<Host> byUsername(final ArrayList<Host> hosts, final String name) {
+    private ArrayList<Host> byUsername(final ArrayList<Host> hosts, final String name) {
         ArrayList<Host> byUsername = new ArrayList<>();
 
         for (Host host : hosts) {

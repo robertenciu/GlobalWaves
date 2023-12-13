@@ -1,9 +1,5 @@
 package media.music;
 
-import media.Library;
-import user.Artist;
-import user.User;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -17,7 +13,7 @@ public abstract class MusicCollection {
 
     public MusicCollection() { }
 
-    public MusicCollection(MusicCollection other) {
+    public MusicCollection(final MusicCollection other) {
         this.owner = other.owner;
         this.name = other.name;
         this.songs = new ArrayList<>(other.songs);
@@ -93,6 +89,11 @@ public abstract class MusicCollection {
         return this.getSongs().get(this.getSongs().size() - 1);
     }
 
+    /**
+     *  This method calculates the total number of likes of the music collection.
+     *
+     * @return The total nr. of likes.
+     */
     public int totalLikes() {
         int likes = 0;
         for (Song song : songs) {
@@ -101,39 +102,39 @@ public abstract class MusicCollection {
         return likes;
     }
 
-    public String getOwner() {
+    public final String getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public final void setOwner(final String owner) {
         this.owner = owner;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
-    public ArrayList<Song> getSongs() {
+    public final ArrayList<Song> getSongs() {
         return songs;
     }
 
-    public void setSongs(ArrayList<Song> songs) {
+    public final void setSongs(final ArrayList<Song> songs) {
         this.songs = songs;
     }
 
-    public ArrayList<Song> getOriginalOrder() {
+    public final ArrayList<Song> getOriginalOrder() {
         return originalOrder;
     }
 
-    public MusicCollectionType getType() {
+    public final MusicCollectionType getType() {
         return type;
     }
 
-    public void setType(MusicCollectionType type) {
+    public final void setType(final MusicCollectionType type) {
         this.type = type;
     }
 

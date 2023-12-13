@@ -1,7 +1,8 @@
 package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import media.music.*;
+import media.music.MusicCollection;
+import media.music.Song;
 
 public class PlaylistPlayer extends SongPlayer {
     private MusicCollection loadedPlaylist;
@@ -24,12 +25,6 @@ public class PlaylistPlayer extends SongPlayer {
         super.timeUpdated = timestamp;
     }
 
-    @Override
-    public final void like(final ObjectNode obj) {
-        SongPlayer temp = new SongPlayer(loadedSong);
-        temp.setUser(user);
-        temp.like(obj);
-    }
     private void getCurrentSong(final int timeElapsed) {
         int timeRemaining = timeElapsed;
         Song nextSong;
@@ -193,7 +188,7 @@ public class PlaylistPlayer extends SongPlayer {
                         + status.getName() + ".");
     }
 
-    public MusicCollection getLoadedPlaylist() {
+    public final MusicCollection getLoadedPlaylist() {
         return loadedPlaylist;
     }
 }

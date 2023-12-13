@@ -3,7 +3,7 @@ package admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import command.Commands;
+import fileio.input.CommandInput;
 import media.music.Album;
 import media.Library;
 import media.music.Song;
@@ -15,15 +15,29 @@ import user.User;
 
 public final class Admin {
     private Admin() { }
-    public static String addUser(final Commands command, final Library library) {
-        User newUser = null;
+
+    /**
+     * Adds a user(standard, artist, host) in the system.
+     *
+     * @param command The input of the command containing user's attributes.
+     * @param library The global library used for saving the users added.
+     * @return The output specific message.
+     */
+    public static String addUser(final CommandInput command, final Library library) {
+        User newUser;
+
         switch (command.getType()) {
-            case "user" -> {
+            case "user":
                 newUser = new User();
-                newUser.setConnectionStatus("Online");
-            }
-            case "artist" -> newUser = new Artist();
-            case "host" -> newUser = new Host();
+                break;
+            case "artist" :
+                newUser = new Artist();
+                break;
+            case "host":
+                newUser = new  Host();
+                break;
+            default:
+                newUser = null;
         }
 
         assert newUser != null;
@@ -48,7 +62,13 @@ public final class Admin {
         return "The username " + command.getUsername() + " has been added successfully.";
     }
 
-    public static void updatePlayers(final Commands command, final Library library) {
+    /**
+     * Method for updating all the running players at a specific timestamp.
+     *
+     * @param command The commandInput which contains the timestamp.
+     * @param library The library used for iterating through the users.
+     */
+    public static void updatePlayers(final CommandInput command, final Library library) {
         for (User user : library.getUsers()) {
             if (user.getPlayer() != null) {
                 user.getPlayer().updateStatus(command.getTimestamp());
@@ -56,6 +76,13 @@ public final class Admin {
         }
     }
 
+    /**
+     * This method deletes a specific user from the system;
+     *
+     * @param user The user that needs to be deleted.
+     * @param library The library containing all the users.
+     * @return A specific message to confirm whether the task has been done or not.
+     */
     public static String deleteUser(final User user, final Library library) {
         if (user.removeCurrentUser(library)) {
             return user.getUsername() + " was successfully deleted.";
@@ -64,6 +91,13 @@ public final class Admin {
         return user.getUsername() + " can't be deleted.";
     }
 
+    /**
+     * Adds all the albums from a given artist to an ArrayNode in order
+     * to be displayed in the JsonOutput.
+     *
+     * @param artist The artist.
+     * @return The ArrayNode.
+     */
     public static ArrayNode showAlbums(final Artist artist) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode result = objectMapper.createArrayNode();
@@ -84,6 +118,13 @@ public final class Admin {
         return result;
     }
 
+    /**
+     * Adds all the podcasts from a given host to an ArrayNode in order
+     * to be displayed in the JsonOutput.
+     *
+     * @param host The host.
+     * @return The ArrayNode.
+     */
     public static ArrayNode showPodcasts(final Host host) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode result = objectMapper.createArrayNode();

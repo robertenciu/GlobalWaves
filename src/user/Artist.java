@@ -1,16 +1,14 @@
 package user;
 
-import command.Commands;
-import media.*;
+import fileio.input.CommandInput;
+import media.Library;
 import media.content.Event;
 import media.content.Merch;
 import media.music.Album;
 import media.music.MusicCollection;
 import media.music.Playlist;
 import media.music.Song;
-import player.Player;
-import player.PlaylistPlayer;
-import player.SongPlayer;
+import page.Page;
 
 import java.util.ArrayList;
 
@@ -65,9 +63,11 @@ public final class Artist extends User implements Page {
     }
 
     /**
-     * @param artists a
-     * @param name a
-     * @return a
+     * This method searches an artist by its name.
+     *
+     * @param artists The list of artists.
+     * @param name The specific name.
+     * @return The artist.
      */
     public static Artist getArtist(final ArrayList<Artist> artists, final String name) {
         if (artists.isEmpty() || name == null) {
@@ -82,7 +82,7 @@ public final class Artist extends User implements Page {
     }
 
     @Override
-    public boolean removeCurrentUser(Library library) {
+    public boolean removeCurrentUser(final Library library) {
         for (User user : library.getUsers()) {
             if (user.getCurrentPage().equals(this)) {
                 return false;
@@ -121,14 +121,14 @@ public final class Artist extends User implements Page {
         return true;
     }
 
-    public String removeAlbum(Commands command) {
+    @Override
+    public String removeAlbum(final CommandInput command, final Library library) {
         Album album = Album.getAlbum(albums, command.getName());
 
         if (album == null) {
             return this.username + " doesn't have an album with the given name.";
         }
 
-        Library library = Library.getInstance();
         for (User user : library.getUsers()) {
             if (user.getPlayer() != null) {
                 user.getPlayer().updateStatus(command.getTimestamp());
@@ -162,8 +162,9 @@ public final class Artist extends User implements Page {
         }
         return false;
     }
+
     @Override
-    public String addAlbum(final Commands command, final Library library) {
+    public String addAlbum(final CommandInput command, final Library library) {
         if (Album.getAlbum(albums, command.getName()) != null) {
             return super.getUsername() + " has another album with the same name.";
         }
@@ -184,7 +185,7 @@ public final class Artist extends User implements Page {
         return super.getUsername() + " has added new album successfully.";
     }
 
-    private boolean isDateValid(final Commands command) {
+    private boolean isDateValid(final CommandInput command) {
         final int[] yearGap = new int[] {1900, 2023};
         final int maxMonth = 12;
         final int maxDaysInMonth = 31;
@@ -200,8 +201,7 @@ public final class Artist extends User implements Page {
         final String dayAsString = command.getDate().substring(0, 2);
         final int day = Integer.parseInt(dayAsString);
 
-
-        if (month == february && day > maxDaysInFebruary ) {
+        if (month == february && day > maxDaysInFebruary) {
             return false;
         }
 
@@ -217,7 +217,7 @@ public final class Artist extends User implements Page {
     }
 
     @Override
-    public String addEvent(final Commands command, final Library library) {
+    public String addEvent(final CommandInput command, final Library library) {
         if (Event.getEvent(events, command.getName()) != null) {
             return super.getUsername() + " has another event with the same name.";
         }
@@ -236,7 +236,8 @@ public final class Artist extends User implements Page {
         return super.getUsername() + " has added new event successfully.";
     }
 
-    public String removeEvent(final Commands command, final Library library) {
+    @Override
+    public String removeEvent(final CommandInput command, final Library library) {
         Event event = Event.getEvent(library.getEvents(), command.getName());
 
         if (event == null) {
@@ -249,13 +250,13 @@ public final class Artist extends User implements Page {
         return this.username + " deleted the event successfully.";
     }
 
-    private boolean isPriceValid(final Commands command) {
+    private boolean isPriceValid(final CommandInput command) {
         return command.getPrice() >= 0;
     }
 
     @Override
-    public String addMerch(final Commands command, final Library library) {
-        if (Merch.exists(merches, command.getName())) {
+    public String addMerch(final CommandInput command, final Library library) {
+        if (Merch.getMerch(merches, command.getName()) != null) {
             return super.getUsername() + " has merchandise with the same name.";
         }
 
@@ -274,7 +275,7 @@ public final class Artist extends User implements Page {
     }
 
     @Override
-    public String switchConnectionStatus(Integer timestamp) {
+    public String switchConnectionStatus(final Integer timestamp) {
         return this.username + " is not a normal user.";
     }
     public ArrayList<Album> getAlbums() {

@@ -10,7 +10,15 @@ public final class Announcement {
         this.owner = owner;
     }
 
-    public static Announcement getAnnouncement(final ArrayList<Announcement> announcements, final String name) {
+    /**
+     * Method that searches an announcement by a given name.
+     *
+     * @param announcements The list of the announcements.
+     * @param name The specific name of the announcement.
+     * @return The announcement.
+     */
+    public static Announcement getAnnouncement(final ArrayList<Announcement> announcements,
+                                               final String name) {
         for (Announcement announcement : announcements) {
             if (announcement.getName().equals(name)) {
                 return announcement;

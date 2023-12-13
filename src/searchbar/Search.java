@@ -1,8 +1,8 @@
 package searchbar;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import command.Filters;
-import media.*;
+import fileio.input.FiltersInput;
+import media.Library;
 import media.music.Album;
 import media.music.Playlist;
 import media.music.Song;
@@ -26,47 +26,6 @@ public abstract class Search {
     private String type;
 
     /**
-     * Creates a specific search(song, playlist, podcast) based on the search type.
-     *
-     * @param type The search type(song, playlist,etc.)
-     * @param library The reference of the library.
-     * @return The new created player.
-     */
-    public static Search newSearch(final String type, final Library library) {
-        if (type == null) {
-            return null;
-        }
-        Search search = null;
-        switch (type) {
-            case "song":
-                search = new SearchSong();
-                break;
-            case "podcast":
-                search = new SearchPodcast();
-                break;
-            case "playlist":
-                search = new SearchPlaylist();
-                break;
-            case "artist":
-                search = new SearchArtist();
-                break;
-            case "album":
-                search = new SearchAlbum();
-                break;
-            case "host":
-                search = new SearchHost();
-                break;
-            default:
-                break;
-        }
-        if (search != null) {
-            search.setType(type);
-            search.setLibrary(library);
-        }
-        return search;
-    }
-
-    /**
      * This method selects a specific file based on the search.
      * The method searches for the media name in the specific library(song, podcast),
      *      and sets the proper attribute to the selected file.
@@ -82,7 +41,7 @@ public abstract class Search {
      * @param user The user that makes the search (since each user has individual search result).
      * @return The array containing the search result (ArrayNode for output purpose).
      */
-    public abstract ArrayNode getSearchResultArray(Filters filter, User user);
+    public abstract ArrayNode getSearchResultArray(FiltersInput filter, User user);
 
     public final int getResultsCount() {
         return resultsCount;
@@ -124,19 +83,11 @@ public abstract class Search {
         this.result = result;
     }
 
-    public Album getSelectedAlbum() {
+    public final Album getSelectedAlbum() {
         return selectedAlbum;
     }
 
-    public Artist getSelectedArtist() {
-        return selectedArtist;
-    }
-
-    public Host getSelectedHost() {
-        return selectedHost;
-    }
-
-    public void setLibrary(Library library) {
+    public final void setLibrary(final Library library) {
         this.library = library;
     }
 }

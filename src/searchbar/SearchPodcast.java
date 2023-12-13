@@ -3,7 +3,7 @@ package searchbar;
 import media.podcast.Podcast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import command.Filters;
+import fileio.input.FiltersInput;
 import user.User;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public final class SearchPodcast extends Search {
     }
 
     @Override
-    public ArrayNode getSearchResultArray(final Filters filter, final User user) {
+    public ArrayNode getSearchResultArray(final FiltersInput filter, final User user) {
         ArrayList<Podcast> result = new ArrayList<>(super.library.getPodcasts());
 
         if (filter.getName() != null) {

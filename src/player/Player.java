@@ -1,51 +1,16 @@
 package player;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import media.music.Album;
 import media.music.MusicCollection;
-import media.music.Playlist;
 import media.music.Song;
 import media.podcast.Podcast;
 import user.User;
-import searchbar.Search;
 
-public abstract class Player implements PlayerCommands {
+public abstract class Player {
     protected boolean isLoaded;
     protected Integer timeUpdated;
     protected Status status;
     protected User user;
-
-    /**
-     * Creates a specific player(song, playlist, podcast) based on the search type.
-     * Sets the player status.
-     *
-     * @param search The search made by user.
-     * @param status The reference of the user status.
-     * @return The new created player.
-     */
-    public static Player createPlayer(final Search search, final Status status, final User user) {
-        if (search.getType() == null) {
-            return null;
-        }
-        Player player = null;
-        if (search.getType().equals("song")) {
-            player = new SongPlayer(search.getSelectedSong());
-        }
-        if (search.getType().equals("podcast")) {
-            player = new PodcastPlayer(search.getSelectedPodcast());
-        }
-        if (search.getType().equals("playlist")) {
-            player = new PlaylistPlayer(new Playlist(search.getSelectedPlaylist()));
-        }
-        if (search.getType().equals("album")) {
-            player = new AlbumPlayer(new Album(search.getSelectedAlbum()));
-        }
-        if (player != null) {
-            player.setStatus(status);
-            player.setUser(user);
-        }
-        return player;
-    }
 
     /**
      * This method updates the status by putting it on pause or unpause.
@@ -53,7 +18,6 @@ public abstract class Player implements PlayerCommands {
      *
      * @param timestamp The current timestamp
      */
-    @Override
     public final void playPause(final Integer timestamp) {
         if (!status.isPaused()) {
             updateStatus(timestamp);
@@ -71,6 +35,8 @@ public abstract class Player implements PlayerCommands {
      * @param timestamp The current timestamp of the command.
      */
     public void next(final ObjectNode obj, final Integer timestamp) {
+        // Default
+        obj.put("message", "The loaded source is not a playlist or a podcast.");
     }
 
     /**
@@ -81,6 +47,8 @@ public abstract class Player implements PlayerCommands {
      * @param timestamp The current timestamp of the command.
      */
     public void prev(final ObjectNode obj, final Integer timestamp) {
+        // Default
+        obj.put("message", "The loaded source is not a playlist or a podcast.");
     }
 
     /**
@@ -136,6 +104,25 @@ public abstract class Player implements PlayerCommands {
         obj.put("message", "The loaded source is not a song.");
     }
 
+    /**
+     * This method loads a file in the player.
+     *
+     * @param timestamp The current timestamp.
+     */
+    public abstract void load(Integer timestamp);
+
+    /**
+     * Method for updating the status at a current timestamp.
+     *
+     * @param timestamp The timestamp.
+     */
+    public abstract void updateStatus(Integer timestamp);
+
+    /**
+     * Method for updating the repeat status.
+     */
+    public abstract void repeat();
+
     public final void setStatus(final Status status) {
         this.status = status;
     }
@@ -148,19 +135,33 @@ public abstract class Player implements PlayerCommands {
         isLoaded = loaded;
     }
 
-    public void setTimeUpdated(Integer timeUpdated) {
+    public final void setTimeUpdated(final Integer timeUpdated) {
         this.timeUpdated = timeUpdated;
     }
 
     public final void setUser(final User user) {
         this.user = user;
     }
+
+    /**
+     * @return The loaded song.
+     */
     public Song getLoadedSong() {
         return null;
     }
+
+    /**
+     * @return The loaded podcast.
+     */
     public Podcast getLoadedPodcast() {
         return null;
     }
-    public MusicCollection getLoadedPlaylist() {return null;}
+
+    /**
+     * @return The loaded playlist.
+     */
+    public MusicCollection getLoadedPlaylist() {
+        return null;
+    }
 
 }

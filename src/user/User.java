@@ -2,9 +2,11 @@ package user;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import command.Commands;
+import fileio.input.CommandInput;
 import media.Library;
 import media.music.MusicCollection;
+import page.Page;
+import page.PageLocator;
 import player.Status;
 import media.music.Song;
 import media.music.Playlist;
@@ -16,7 +18,6 @@ import searchbar.Search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 public class User implements Page {
     protected String username;
@@ -31,7 +32,6 @@ public class User implements Page {
     private Search search;
     private Player player;
     private Status status;
-    private final int maxResults = 5;
     private String connectionStatus;
 
 
@@ -42,6 +42,7 @@ public class User implements Page {
         this.followedPlaylists = new ArrayList<>();
         this.currentPageLocator = PageLocator.HOME;
         this.currentPage = this;
+        this.connectionStatus = "Online";
     }
 
     public User(final UserInput user) {
@@ -100,7 +101,14 @@ public class User implements Page {
         return currentUser;
     }
 
-    public boolean removeCurrentUser(Library library) {
+    /**
+     * Removes the user from the system and all of its interactions
+     *
+     * @param library The library that contains the users.
+     * @return true if operation is completed, false if the user is interacting
+     *          with another user.
+     */
+    public boolean removeCurrentUser(final Library library) {
         for (User user : library.getUsers()) {
             if (user.getPlayer() != null) {
                 MusicCollection musicCollection = user.getPlayer().getLoadedPlaylist();
@@ -114,7 +122,8 @@ public class User implements Page {
         }
 
         for (User user : library.getUsers()) {
-            user.getFollowedPlaylists().removeIf(playlist -> playlist.getOwner().equals(this.username));
+            user.getFollowedPlaylists().removeIf(playlist ->
+                                                    playlist.getOwner().equals(this.username));
         }
 
         for (Playlist playlist : library.getPlaylists()) {
@@ -225,7 +234,13 @@ public class User implements Page {
         }
     }
 
-    public String switchConnectionStatus(Integer timestamp) {
+    /**
+     * Switches the connection status of a user.
+     *
+     * @param timestamp The timestamp needed to update the player.
+     * @return The specific message for connection switch.
+     */
+    public String switchConnectionStatus(final Integer timestamp) {
         if (this.connectionStatus.equals("Online")) {
             if (player != null && player.isLoaded()) {
                 player.updateStatus(timestamp);
@@ -241,10 +256,16 @@ public class User implements Page {
         return this.username + " has changed status successfully.";
     }
 
-    public final String changePage(Commands command) {
+    /**
+     * This method changes the current page of the user.
+     *
+     * @param command The command that holds the next page.
+     * @return The message for validating the operation.
+     */
+    public final String changePage(final CommandInput command) {
         if (command.getNextPage().equals("Home")) {
             currentPageLocator = PageLocator.HOME;
-        } else if (command.getNextPage().equals("LikedContent")){
+        } else if (command.getNextPage().equals("LikedContent")) {
             currentPageLocator = PageLocator.LIKED_CONTENT;
         } else {
             return this.username + " is trying to access a non-existent page.";
@@ -267,6 +288,7 @@ public class User implements Page {
             return 0;
         });
 
+        final int maxResults = 5;
         int resultCount = Math.min(topLikedsongs.size(), maxResults);
         for (int i = 0; i < resultCount; i++) {
             result.append(topLikedsongs.get(i).getName()).append(", ");
@@ -329,7 +351,11 @@ public class User implements Page {
         return result.toString();
     }
 
-    @Override
+    /**
+     * Prints current page of the user.
+     *
+     * @return The page specific output message.
+     */
     public String printPage() {
         if (currentPageLocator == PageLocator.HOME) {
             return printHome();
@@ -341,31 +367,102 @@ public class User implements Page {
         return currentPage.printPage();
     }
 
-    public String addAlbum(final Commands command, final Library library) {
+    /**
+     * Method that adds an album to the artist and the library.
+     *
+     * @param command The command input holding the album characteristics.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String addAlbum(final CommandInput command, final Library library) {
         return this.username + " is not an artist.";
     }
-    public String removeAlbum(final Commands command) {
+
+    /**
+     * Method that removes an album from an artist.
+     *
+     * @param command The command input holding the album name.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String removeAlbum(final CommandInput command, final Library library) {
         return this.username + " is not an artist.";
     }
-    public String addEvent(final Commands command, final Library library) {
+
+    /**
+     * Method that adds an event to the artist and the library.
+     *
+     * @param command The command input holding the event characteristics.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String addEvent(final CommandInput command, final Library library) {
         return this.username + " is not an artist.";
     }
-    public String removeEvent(final Commands command, final Library library) {
+
+    /**
+     * Method that removes an event from an artist.
+     *
+     * @param command The command input holding the event name.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String removeEvent(final CommandInput command, final Library library) {
         return this.username + " is not an artist.";
     }
-    public String addMerch(final Commands command, final Library library) {
+
+    /**
+     * Method that adds a merch to the artist and the library.
+     *
+     * @param command The command input holding the merch characteristics.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String addMerch(final CommandInput command, final Library library) {
         return this.username + " is not an artist.";
     }
-    public String addPodcast(final Commands command, final Library library) {
+
+    /**
+     * Method that adds a podcast to the host and the library.
+     *
+     * @param command The command input holding the podcast characteristics.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String addPodcast(final CommandInput command, final Library library) {
         return this.username + " is not a host.";
     }
-    public String removePodcast(Commands command, Library library) {
+
+    /**
+     * Method that removes a podcast from a host.
+     *
+     * @param command The command input holding the podcast name.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String removePodcast(final CommandInput command, final Library library) {
         return this.username + " is not a host.";
     }
-    public String addAnnouncement(final Commands command, final Library library) {
+
+    /**
+     * Method that adds an announcement to the host and the library.
+     *
+     * @param command The command input holding the announcement characteristics.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String addAnnouncement(final CommandInput command, final Library library) {
         return this.username + " is not a host.";
     }
-    public String removeAnnouncement(Commands command, Library library) {
+
+    /**
+     * Method that removes an announcement from an artist.
+     *
+     * @param command The command input holding the announcement name.
+     * @param library The library.
+     * @return The specific message for validation.
+     */
+    public String removeAnnouncement(final CommandInput command, final Library library) {
         return this.username + " is not a host.";
     }
     public final ArrayList<Playlist> getFollowedPlaylists() {
@@ -424,7 +521,7 @@ public class User implements Page {
         this.player = player;
     }
 
-    public Status getStatus() {
+    public final Status getStatus() {
         return status;
     }
 
@@ -443,11 +540,11 @@ public class User implements Page {
     public final void setCurrentPageLocator(final PageLocator currentPageLocator) {
         this.currentPageLocator = currentPageLocator;
     }
-    public void setCurrentPage(Page currentPage) {
+    public final void setCurrentPage(final Page currentPage) {
         this.currentPage = currentPage;
     }
 
-    public Page getCurrentPage() {
+    public final Page getCurrentPage() {
         return currentPage;
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import user.User;
 
 import java.util.ArrayList;
-public class Playlist extends MusicCollection {
+public final class Playlist extends MusicCollection {
     private int followers;
     private final Integer playlistId;
     private String visibility;

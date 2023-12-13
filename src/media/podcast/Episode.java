@@ -27,7 +27,7 @@ public final class Episode {
         return initialDuration;
     }
 
-    public void setInitialDuration(Integer initialDuration) {
+    public void setInitialDuration(final Integer initialDuration) {
         this.initialDuration = initialDuration;
     }
 

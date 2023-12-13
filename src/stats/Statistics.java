@@ -9,7 +9,6 @@ import user.Host;
 import user.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public final class Statistics {
     private Library library;
@@ -84,11 +83,14 @@ public final class Statistics {
         return top;
     }
 
+    /**
+     * @return The first 5 most liked albums.
+     */
     public ArrayList<String> getTop5Albums() {
         ArrayList<String> top5Albums = new ArrayList<>();
 
-        ArrayList<Album> AlbumsCopy = new ArrayList<>(library.getAlbums());
-        AlbumsCopy.sort(((o1, o2) -> {
+        ArrayList<Album> albumsCopy = new ArrayList<>(library.getAlbums());
+        albumsCopy.sort(((o1, o2) -> {
             if (o1.totalLikes() == o2.totalLikes()) {
                 return o1.getName().compareTo(o2.getName());
             }
@@ -96,7 +98,7 @@ public final class Statistics {
         }));
 
         int iter = 0;
-        for (Album album : AlbumsCopy) {
+        for (Album album : albumsCopy) {
             if (iter++ == topMaxSize) {
                 break;
             }
@@ -106,11 +108,14 @@ public final class Statistics {
         return top5Albums;
     }
 
+    /**
+     * @return Top 5 artists by nr. of likes of the albums.
+     */
     public ArrayList<String> getTop5Artists() {
         ArrayList<String> top5Artists = new ArrayList<>();
 
-        ArrayList<Artist> ArtistCopy = new ArrayList<>(library.getArtists());
-        ArtistCopy.sort(((o1, o2) -> {
+        ArrayList<Artist> artistsCopy = new ArrayList<>(library.getArtists());
+        artistsCopy.sort(((o1, o2) -> {
             int o1TotalLikes = 0;
             for (Album album : o1.getAlbums()) {
                 o1TotalLikes += album.totalLikes();
@@ -125,7 +130,7 @@ public final class Statistics {
         }));
 
         int iter = 0;
-        for (Artist artist : ArtistCopy) {
+        for (Artist artist : artistsCopy) {
             if (iter++ == topMaxSize) {
                 break;
             }
@@ -135,6 +140,9 @@ public final class Statistics {
         return top5Artists;
     }
 
+    /**
+     * @return The online users.
+     */
     public ArrayList<String> getOnlineUsers() {
         ArrayList<String> onlineUsers = new ArrayList<>();
 
@@ -148,6 +156,9 @@ public final class Statistics {
         return onlineUsers;
     }
 
+    /**
+     * @return All users.
+     */
     public ArrayList<String> getAllUsers() {
         ArrayList<String> allUsers = new ArrayList<>();
 

@@ -1,11 +1,11 @@
 package user;
 
-import command.Commands;
+import fileio.input.CommandInput;
 import media.Library;
 import media.content.Announcement;
-import media.music.Playlist;
 import media.podcast.Episode;
 import media.podcast.Podcast;
+import page.Page;
 
 import java.util.ArrayList;
 
@@ -51,6 +51,14 @@ public final class Host extends User implements Page {
 
         return result.toString();
     }
+
+    /**
+     * This method searches a host by its name.
+     *
+     * @param hosts The list of hosts.
+     * @param name The name.
+     * @return The host.
+     */
     public static Host getHost(final ArrayList<Host> hosts, final String name) {
         if (hosts.isEmpty() || name == null) {
             return null;
@@ -75,7 +83,7 @@ public final class Host extends User implements Page {
     }
 
     @Override
-    public boolean removeCurrentUser(Library library) {
+    public boolean removeCurrentUser(final Library library) {
         for (User user : library.getUsers()) {
             if (user.getCurrentPage().equals(this)) {
                 return false;
@@ -100,7 +108,7 @@ public final class Host extends User implements Page {
     }
 
     @Override
-    public String addPodcast(final Commands command, final Library library) {
+    public String addPodcast(final CommandInput command, final Library library) {
         if (Podcast.getPodcast(podcasts, command.getName()) != null) {
             return this.username + " has another podcast with the same name.";
         }
@@ -122,7 +130,7 @@ public final class Host extends User implements Page {
     }
 
     @Override
-    public String addAnnouncement(final Commands command, final Library library) {
+    public String addAnnouncement(final CommandInput command, final Library library) {
         Announcement announce = Announcement.getAnnouncement(announcements, command.getName());
 
         if (announce != null) {
@@ -139,7 +147,7 @@ public final class Host extends User implements Page {
     }
 
     @Override
-    public String removeAnnouncement(final Commands command, final Library library) {
+    public String removeAnnouncement(final CommandInput command, final Library library) {
         Announcement announce = Announcement.getAnnouncement(announcements, command.getName());
 
         if (announce == null) {
@@ -153,7 +161,7 @@ public final class Host extends User implements Page {
     }
 
     @Override
-    public String removePodcast(final Commands command, final Library library) {
+    public String removePodcast(final CommandInput command, final Library library) {
         Podcast podcast = Podcast.getPodcast(library.getPodcasts(), command.getName());
 
         if (podcast == null) {
@@ -177,7 +185,7 @@ public final class Host extends User implements Page {
     }
 
     @Override
-    public String switchConnectionStatus(Integer timestamp) {
+    public String switchConnectionStatus(final Integer timestamp) {
         return this.username + " is not a normal user.";
     }
     public ArrayList<Podcast> getPodcasts() {

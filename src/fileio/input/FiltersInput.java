@@ -1,8 +1,8 @@
-package command;
+package fileio.input;
 
 import java.util.ArrayList;
 
-public final class Filters {
+public final class FiltersInput {
     private String name;
     private ArrayList<String> tags;
     private String album;
@@ -12,7 +12,7 @@ public final class Filters {
     private String artist;
     private String owner;
     private String description;
-    public Filters() { }
+    public FiltersInput() { }
 
     public String getDescription() {
         return description;

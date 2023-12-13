@@ -1,11 +1,11 @@
-package command;
+package fileio.input;
 
 import media.music.Song;
 import media.podcast.Episode;
 
 import java.util.ArrayList;
 
-public final class Commands {
+public final class CommandInput {
     private String command;
     private String username;
     private String name;
@@ -20,12 +20,12 @@ public final class Commands {
     private Integer timestamp;
     private Integer itemNumber;
     private String type;
-    private Filters filters;
+    private FiltersInput filters;
     private int price;
     private String date;
     private ArrayList<Song> songs;
     private ArrayList<Episode> episodes;
-    public Commands() { }
+    public CommandInput() { }
 
     public ArrayList<Episode> getEpisodes() {
         return episodes;
@@ -35,7 +35,7 @@ public final class Commands {
         return nextPage;
     }
 
-    public void setNextPage(String nextPage) {
+    public void setNextPage(final String nextPage) {
         this.nextPage = nextPage;
     }
 
@@ -171,11 +171,11 @@ public final class Commands {
         this.type = type;
     }
 
-    public Filters getFilters() {
+    public FiltersInput getFilters() {
         return filters;
     }
 
-    public void setFilters(final Filters filters) {
+    public void setFilters(final FiltersInput filters) {
         this.filters = filters;
     }
 }

@@ -12,14 +12,21 @@ public final class Merch {
         this.owner = owner;
     }
 
-    public static boolean exists(final ArrayList<Merch> merches, final String name) {
+    /**
+     * Method that searches a merch by a given name.
+     *
+     * @param merches The list of the merches.
+     * @param name The specific name of the merch.
+     * @return The merch.
+     */
+    public static Merch getMerch(final ArrayList<Merch> merches, final String name) {
         for (Merch merch : merches) {
             if (merch.getName().equals(name)) {
-                return true;
+                return merch;
             }
         }
 
-        return false;
+        return null;
     }
 
     public String getOwner() {
@@ -30,7 +37,7 @@ public final class Merch {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -38,7 +45,7 @@ public final class Merch {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -46,7 +53,7 @@ public final class Merch {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(final int price) {
         this.price = price;
     }
 }

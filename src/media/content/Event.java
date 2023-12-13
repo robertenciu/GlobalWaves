@@ -11,7 +11,15 @@ public final class Event {
         this.owner = owner;
     }
 
-    public static Event getEvent(final ArrayList<Event> events, final String name) {
+    /**
+     * Method that searches an event by a given name.
+     *
+     * @param events The list of the events.
+     * @param name The specific name of the event.
+     * @return The event.
+     */
+    public static Event getEvent(final ArrayList<Event> events,
+                                 final String name) {
         for (Event event : events) {
             if (event.getName().equals(name)) {
                 return event;
@@ -29,7 +37,7 @@ public final class Event {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -37,7 +45,7 @@ public final class Event {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(final String date) {
         this.date = date;
     }
 
@@ -45,7 +53,7 @@ public final class Event {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }

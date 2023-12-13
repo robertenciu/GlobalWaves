@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import command.Commands;
+import fileio.input.CommandInput;
 import fileio.input.LibraryInput;
 import media.Library;
 import stats.Statistics;
@@ -79,8 +79,8 @@ public final class Main {
                                                                     LibraryInput.class);
 
         // Reading commands
-        Commands[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                                                        + filePath1), Commands[].class);
+        CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
+                                                        + filePath1), CommandInput[].class);
 
         // Setting output array
         ArrayNode outputs = objectMapper.createArrayNode();
@@ -93,7 +93,7 @@ public final class Main {
         statistics.setLibrary(library);
 
 
-        for (Commands command : commands) {
+        for (CommandInput command : commands) {
             // Setting output json objectNode for each command
             ObjectNode objectNode = objectMapper.createObjectNode();
 

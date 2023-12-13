@@ -2,7 +2,7 @@ package searchbar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import command.Filters;
+import fileio.input.FiltersInput;
 import media.music.Album;
 import user.User;
 
@@ -23,7 +23,7 @@ public final class SearchAlbum extends Search {
     }
 
     @Override
-    public ArrayNode getSearchResultArray(final Filters filter, final User user) {
+    public ArrayNode getSearchResultArray(final FiltersInput filter, final User user) {
         ArrayList<Album> result = new ArrayList<>(super.library.getAlbums());
 
         if (filter.getName() != null) {
@@ -47,7 +47,7 @@ public final class SearchAlbum extends Search {
         return resultArray;
     }
 
-    public ArrayList<Album> byName(final ArrayList<Album> albums, final String name) {
+    private ArrayList<Album> byName(final ArrayList<Album> albums, final String name) {
         ArrayList<Album> byName = new ArrayList<>();
 
         for (Album album : albums) {
@@ -59,7 +59,7 @@ public final class SearchAlbum extends Search {
         return byName;
     }
 
-    public ArrayList<Album> byOwner(final ArrayList<Album> albums, final String owner) {
+    private ArrayList<Album> byOwner(final ArrayList<Album> albums, final String owner) {
         ArrayList<Album> byOwner = new ArrayList<>();
 
         for (Album album : albums) {
@@ -71,7 +71,8 @@ public final class SearchAlbum extends Search {
         return byOwner;
     }
 
-    public ArrayList<Album> byDescription(final ArrayList<Album> albums, final String description) {
+    private ArrayList<Album> byDescription(final ArrayList<Album> albums,
+                                           final String description) {
         ArrayList<Album> byDescription = new ArrayList<>();
 
         for (Album album : albums) {

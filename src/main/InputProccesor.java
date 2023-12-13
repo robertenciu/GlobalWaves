@@ -4,11 +4,13 @@ import admin.Admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import command.Commands;
+import fileio.input.CommandInput;
 import media.Library;
 import media.music.Playlist;
 import player.Player;
+import player.PlayerFactory;
 import searchbar.Search;
+import searchbar.SearchFactory;
 import stats.Statistics;
 import player.Status;
 import user.Artist;
@@ -24,12 +26,12 @@ public final class InputProccesor {
     private final Library library;
     private final User user;
     private final ObjectNode objectNode;
-    private final Commands command;
+    private final CommandInput command;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ArrayNode empty = objectMapper.createArrayNode();
     public InputProccesor(final Library library,
                           final ObjectNode objectNode,
-                          final Commands command) {
+                          final CommandInput command) {
         this.library = library;
 
         this.objectNode = objectNode;
@@ -74,7 +76,7 @@ public final class InputProccesor {
         status.reset();
 
         // New search
-        user.setSearch(Search.newSearch(command.getType(), library));
+        user.setSearch(SearchFactory.createSearch(command.getType(), library));
         search = user.getSearch();
 
         // Updating search result array
@@ -125,7 +127,7 @@ public final class InputProccesor {
             search.setSelected(false); // No media selected after loading
 
             // Creating player depending on media type
-            user.setPlayer(Player.createPlayer(search, status, user));
+            user.setPlayer(PlayerFactory.createPlayer(search, status, user));
             player = user.getPlayer();
 
             // Loading media
@@ -324,7 +326,7 @@ public final class InputProccesor {
         if (player != null && player.isLoaded()) {
             player.updateStatus(command.getTimestamp());
         }
-        ObjectMapper objectMapper = new ObjectMapper();
+
         ObjectNode statsNode = objectMapper.valueToTree(status);
         objectNode.set("stats", statsNode);
     }
@@ -465,6 +467,9 @@ public final class InputProccesor {
         }
     }
 
+    /**
+     * Handle getTop5Albums command.
+     */
     public void getTop5Albums() {
         Statistics statistic = Statistics.getInstance();
         ArrayNode result = objectNode.putArray("result");
@@ -474,6 +479,9 @@ public final class InputProccesor {
         }
     }
 
+    /**
+     * Handle getTop5Artists command.
+     */
     public void getTop5Artists() {
         Statistics statistic = Statistics.getInstance();
         ArrayNode result = objectNode.putArray("result");
@@ -483,6 +491,9 @@ public final class InputProccesor {
         }
     }
 
+    /**
+     * Handle getOnlineUsers command.
+     */
     public void getOnlineUsers() {
         Statistics statistic = Statistics.getInstance();
         ArrayNode result = objectNode.putArray("result");
@@ -492,6 +503,9 @@ public final class InputProccesor {
         }
     }
 
+    /**
+     * Handle getAllUsers command.
+     */
     public void getAllUsers() {
         Statistics statistic = Statistics.getInstance();
         ArrayNode result = objectNode.putArray("result");
@@ -501,6 +515,9 @@ public final class InputProccesor {
         }
     }
 
+    /**
+     * Handle switchConnection command.
+     */
     public void switchConnectionStatus() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername() + " doesn't exist.");
@@ -511,6 +528,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle addUser command.
+     */
     public void addUser() {
         if (user != null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -522,6 +542,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle deleteUser command.
+     */
     public void deleteUser() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -535,16 +558,25 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle showAlbums command.
+     */
     public void showAlbums() {
         ArrayNode result = Admin.showAlbums((Artist) user);
         objectNode.put("result", result);
     }
 
+    /**
+     * Handle showPodcasts command.
+     */
     public void showPodcasts() {
         ArrayNode result = Admin.showPodcasts((Host) user);
         objectNode.put("result", result);
     }
 
+    /**
+     * Handle addAlbum command.
+     */
     public void addAlbum() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -556,6 +588,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle removeAlbum command.
+     */
     public void removeAlbum() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -563,10 +598,13 @@ public final class InputProccesor {
             return;
         }
 
-        String message = user.removeAlbum(command);
+        String message = user.removeAlbum(command, library);
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle addEvent command.
+     */
     public void addEvent() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -578,6 +616,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle removeEvent command.
+     */
     public void removeEvent() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -589,7 +630,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
-
+    /**
+     * Handle addMerch command.
+     */
     public void addMerch() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -601,6 +644,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle addPodcast command.
+     */
     public void addPodcast() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -612,6 +658,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle removePodcast command.
+     */
     public void removePodcast() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -623,6 +672,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle addAnnouncement command.
+     */
     public void addAnnouncement() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -634,6 +686,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle removeAnnouncement command.
+     */
     public void removeAnnouncement() {
         if (user == null) {
             objectNode.put("message", "The username " + command.getUsername()
@@ -645,6 +700,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle printCurrentPage command.
+     */
     public void printCurrentPage() {
         if (user.getConnectionStatus().equals("Offline")) {
             objectNode.put("message", user.getUsername() + " is offline.");
@@ -655,6 +713,9 @@ public final class InputProccesor {
         objectNode.put("message", message);
     }
 
+    /**
+     * Handle changePage command.
+     */
     public void changePage() {
         if (user.getConnectionStatus().equals("Offline")) {
             objectNode.put("message", user.getUsername() + " is offline.");
