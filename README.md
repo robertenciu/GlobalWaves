@@ -24,36 +24,36 @@ Generate Reports: Utilize the admin functionalities to generate reports based on
 
 ## Skel Structure
 * src/
-  * checker/ - checker files
-  * fileio/ - contains classes used to read data from the json files
-  * main/
-      * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
-      * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
-        to the out.txt file. Thus, you can compare this result with ref.
-      * InputProcessor - takes all the input commands and processes them to display the correct result.
-  * media/ - contains all the entities(song, playlist, podcast, events, merch, etc.)
-  * player/ 
-      * PlayerFactory - FACTORY design pattern class for creating a new player based on a given type.
-      * Player - abstract player containing general attributes like: isLoaded, timeUpdated(last timestamp the player has been updated).
-      * PlaylistPlayer - class that implements a playlist player.
-      * PodcastPlayer - class that implements a podcast player.
-      * SongPlayer - class that implements a music player.
-      * AlbumPlayer - class that extends PlaylistPlayer class because of similar behavior.
-      * Status - class that holds the status of the running player.
-  * searchbar/
-      * SearchFactory - FACTORY design pattern class for creating a new search of a specific type.
-      * Search - abstract search
-      * SearchAlbum - class that deals with searching for albums.
-      * SearchHost - class processing the search of a host.
-      * SearchArtist - class that processes a search for an artist.
-      * SearchPlaylist - class that deals with searching for playlists
-      * SearchPodcast - class that deals with searching for podcasts
-      * SearchSong - class that deals with searching for songs.
-  * stats/
-      * Statistics - SINGLETON class for statistics (Top 5 songs, etc.).
-  * user/ - contains the users (standard user, artist, host) classes.
-  * page/ - contains page locator(enum) and interface page.
-  * admin/ - contains the admin class.
+  * checker/ - checker files
+  * fileio/ - contains classes used to read data from the json files
+  * main/
+      * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
+      * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
+        to the out.txt file. Thus, you can compare this result with ref.
+      * InputProcessor - takes all the input commands and processes them to display the correct result.
+  * media/ - contains all the entities(song, playlist, podcast, events, merch, etc.)
+  * player/ 
+      * PlayerFactory - FACTORY design pattern class for creating a new player based on a given type.
+      * Player - abstract player containing general attributes like: isLoaded, timeUpdated(last timestamp the player has been updated).
+      * PlaylistPlayer - class that implements a playlist player.
+      * PodcastPlayer - class that implements a podcast player.
+      * SongPlayer - class that implements a music player.
+      * AlbumPlayer - class that extends PlaylistPlayer class because of similar behavior.
+      * Status - class that holds the status of the running player.
+  * searchbar/
+      * SearchFactory - FACTORY design pattern class for creating a new search of a specific type.
+      * Search - abstract search
+      * SearchAlbum - class that deals with searching for albums.
+      * SearchHost - class processing the search of a host.
+      * SearchArtist - class that processes a search for an artist.
+      * SearchPlaylist - class that deals with searching for playlists
+      * SearchPodcast - class that deals with searching for podcasts
+      * SearchSong - class that deals with searching for songs.
+  * stats/
+      * Statistics - SINGLETON class for statistics (Top 5 songs, etc.).
+  * user/ - contains the users (standard user, artist, host) classes.
+  * page/ - contains page locator(enum) and interface page.
+  * admin/ - contains the admin class.
 * input/ - contains the tests and library in JSON format
 * ref/ - contains all reference output for the tests in JSON format
 ## Implementation
@@ -98,19 +98,19 @@ The rest of the methods call search/player/user/admin related methods.
 * like: Checks if the user has liked the song before. If case true, it removes the song from the liked songs list; otherwise, it adds. The method updates the number of the likes for the specific song.
 * addRemoveInPlaylist: Gets the playlist provided by the id and adds/removes the specific song from it.
 * updateStatus: The method ends if the player is on paused. The timeElapsed attribute calculates the time passed since the last update. If the time elapsed is lower than the file remaining time, it literally subtracts the time elapsed from the player status remained time. Otherwise, checks the repeat status:
-  * no repeat: (for podcast and playlist) calls a function that determines what is the current file that has been reached (getCurrent Song/Episode - subtracts the remaining time of the current file and then iterates through the next files UNTIL the time remaining is lower than the file duration)
-  * repeat infinite/ current song: Calculates the time based on a particular formula.
+  * no repeat: (for podcast and playlist) calls a function that determines what is the current file that has been reached (getCurrent Song/Episode - subtracts the remaining time of the current file and then iterates through the next files UNTIL the time remaining is lower than the file duration)
+  * repeat infinite/ current song: Calculates the time based on a particular formula.
 
 ##### Playlist
 * createPlaylist: Checks if the playlist already exists. If not, creates a new playlist and puts it in the user playlist list and also in the global list of the playlists.
 * switchVisibility: Gets the playlist based on the given id and updates the visibility status.
 * follow: Checks if the user has followed the song before. If case true, it removes the playlist from the followed playlist list, otherwise it adds. The method updates the number of the followers for the specific playlist.
 * showPlaylists: Lists the playlists of the current user.
- 
+ 
 ### Technologies Used from Course
 * Design Patterns:
-  * Singleton class (Statistics)
-  * Factory classes (SearchFactory, PlayerFactory)
+  * Singleton class (Statistics)
+  * Factory classes (SearchFactory, PlayerFactory)
 * Lambda Expressions
 * Interface for Page
 * Abstract Classes
